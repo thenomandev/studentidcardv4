@@ -20,17 +20,17 @@ min-height:100vh;
 }
 
 .container{
-max-width:1400px;
+max-width:1450px;
 margin:auto;
 background:white;
-padding:18px;
-border-radius:22px;
+padding:20px;
+border-radius:24px;
 box-shadow:0 15px 40px rgba(0,0,0,0.12);
 }
 
 h1{
 text-align:center;
-margin-bottom:18px;
+margin-bottom:20px;
 font-size:30px;
 color:#111827;
 }
@@ -47,19 +47,25 @@ background:linear-gradient(135deg,#2563eb,#1d4ed8);
 color:white;
 padding:18px;
 border-radius:18px;
-box-shadow:0 10px 25px rgba(37,99,235,0.25);
 cursor:pointer;
+box-shadow:0 10px 25px rgba(37,99,235,0.25);
 }
 
 .card h3{
 font-size:14px;
-margin-bottom:10px;
-font-weight:700;
+margin-bottom:8px;
 }
 
 .card p{
 font-size:28px;
 font-weight:900;
+}
+
+.admin-layout{
+display:grid;
+grid-template-columns:1fr 420px;
+gap:20px;
+align-items:start;
 }
 
 .section{
@@ -74,6 +80,12 @@ border:1px solid #e5e7eb;
 margin-bottom:14px;
 font-size:20px;
 color:#111827;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:14px;
 }
 
 input,
@@ -91,12 +103,6 @@ background:white;
 textarea{
 min-height:100px;
 resize:vertical;
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:14px;
 }
 
 .button-row{
@@ -169,16 +175,6 @@ transition:0.3s;
 background:#eff6ff;
 }
 
-.upload-box h3{
-font-size:16px;
-margin-bottom:8px;
-}
-
-.upload-box p{
-font-size:13px;
-color:#6b7280;
-}
-
 .upload-box input{
 display:none;
 }
@@ -213,8 +209,8 @@ border-radius:14px;
 max-height:250px;
 overflow-y:auto;
 z-index:9999;
-box-shadow:0 12px 25px rgba(0,0,0,0.12);
 display:none;
+box-shadow:0 12px 25px rgba(0,0,0,0.12);
 }
 
 .college-item{
@@ -225,17 +221,6 @@ border-bottom:1px solid #f1f5f9;
 
 .college-item:hover{
 background:#eff6ff;
-}
-
-.college-item:last-child{
-border-bottom:none;
-}
-
-.admin-layout{
-display:grid;
-grid-template-columns:1fr 420px;
-gap:20px;
-align-items:start;
 }
 
 .preview-box{
@@ -274,33 +259,6 @@ width:100%;
 margin-top:10px;
 background:#dc2626;
 color:white;
-}
-
-.modal{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,0.55);
-display:none;
-justify-content:center;
-align-items:center;
-z-index:99999;
-}
-
-.modal-content{
-background:white;
-width:min(92%,700px);
-max-height:85vh;
-overflow:auto;
-border-radius:20px;
-padding:20px;
-}
-
-.modal h2{
-margin-bottom:15px;
-}
-
-.list-search{
-margin-bottom:10px;
 }
 
 .hidden{
@@ -468,7 +426,29 @@ width:100%;
 background:linear-gradient(135deg,#7b008a,#d100d1);
 padding:10px 0;
 }
-</style>
+
+.modal{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.55);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:99999;
+}
+
+.modal-content{
+background:white;
+width:min(92%,700px);
+max-height:85vh;
+overflow:auto;
+border-radius:20px;
+padding:20px;
+}
+
+.list-search{
+margin-bottom:10px;
+}
 
 @media(max-width:1100px){
 .admin-layout{
@@ -485,6 +465,7 @@ button{
 width:100%;
 }
 }
+
 </style>
 </head>
 
@@ -512,7 +493,7 @@ width:100%;
 
 <div class="card">
 <h3>Storage Used</h3>
-<p id="storageUsed">Loading...</p>
+<p id="storageUsed">Connected</p>
 </div>
 </div>
 
@@ -561,6 +542,7 @@ oninput="filterAdminCollegeList()"
 <option value="transparent">Transparent Logo</option>
 <option value="box">White Box Logo</option>
 </select>
+
 </div>
 
 <textarea id="address" placeholder="Address"></textarea>

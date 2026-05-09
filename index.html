@@ -1,17 +1,14 @@
 <!DOCTYPE html>
 <html lang="bn">
-
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Student ID Card Generator</title>
 
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <link rel="stylesheet" href="css/main.css">
-
 </head>
 
 <body>
@@ -85,37 +82,6 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
 <input type="text" id="qrInput" placeholder="QR Code Text">
 </div>
 
-<div class="input-box">
-<i class="fa-solid fa-school"></i>
-<input type="text" id="collegeBanglaInput" placeholder="College Name Bangla">
-</div>
-
-<div class="input-box">
-<i class="fa-solid fa-school"></i>
-<input type="text" id="collegeEnglishInput" placeholder="College Name English">
-</div>
-
-<div class="input-box">
-<i class="fa-solid fa-calendar-days"></i>
-<input type="text" id="collegeEstInput" placeholder="Established Date">
-</div>
-
-<div class="input-box">
-<i class="fa-solid fa-phone"></i>
-<input type="text" id="collegePhoneInput" placeholder="College Number">
-</div>
-
-<div class="input-box">
-<i class="fa-solid fa-envelope"></i>
-<input type="text" id="collegeEmailInput" placeholder="College E-mail">
-</div>
-
-<div class="input-box">
-<i class="fa-solid fa-globe"></i>
-<input type="text" id="collegeWebsiteInput" placeholder="College Website">
-</div>
-
-
 <div class="input-box college-dropdown-box">
 <i class="fa-solid fa-building"></i>
 
@@ -130,7 +96,6 @@ oninput="filterCollegeList()"
 
 <div id="collegeDropdown" class="college-dropdown"></div>
 </div>
-
 
 <label>Logo Mode</label>
 
@@ -148,26 +113,13 @@ oninput="filterCollegeList()"
 <input type="file" id="photoInput" accept="image/*">
 </div>
 
-<label>Upload College Logo</label>
-<div class="input-box">
-<i class="fa-solid fa-building-columns"></i>
-<input type="file" id="collegeLogoInput" accept="image/*">
-</div>
-
-<label>Upload Principal Signature</label>
-<div class="input-box">
-<i class="fa-solid fa-signature"></i>
-<input type="file" id="principalSignatureInput" accept="image/*">
-</div>
-
-<label>Card Theme & Logo Adjust</label>
+<label>Card Theme & Design</label>
 
 <div class="theme-buttons">
 <button type="button" class="theme-purple" onclick="setTheme('purple')">🟣</button>
 <button type="button" class="theme-blue" onclick="setTheme('blue')">🔵</button>
 <button type="button" class="theme-green" onclick="setTheme('green')">🟢</button>
 <button type="button" class="theme-red" onclick="setTheme('red')">🔴</button>
-
 <button type="button" class="theme-gold" onclick="setTheme('gold')">👑</button>
 <button type="button" class="theme-ocean" onclick="setTheme('ocean')">🌊</button>
 <button type="button" class="theme-sunset" onclick="setTheme('sunset')">🔥</button>
@@ -206,8 +158,6 @@ Generate Card
 
 </div>
 
-<!-- FRONT CARD -->
-
 <div class="id-card">
 
 <img
@@ -223,73 +173,42 @@ opacity:0.08;
 pointer-events:none;
 z-index:1;
 display:none;
-"
->
+">
+
 <div class="front-header">
 
-<div class="logo transparent" id="logoBox">
-<img id="collegeLogo"
-src="https://raw.githubusercontent.com/thenomandev/media/main/Student%20ID%20Card%20WebApps/College%20Logo/Barishal%20Govt.%20College/Barishal%20Govt.%20College%20Transparent%20Logo.png">
+<div id="collegeLogo" class="logo">
+<img id="collegeLogoImg">
 </div>
 
-<div class="header-text">
-<h1>বরিশাল সরকারি কলেজ, বরিশাল</h1>
-<p>Barishal Govt. College, Barishal</p>
-<p class="estd">স্থাপিত: ১৯৬৩ খ্রি.</p>
+<div id="headerText" class="header-text">
+<h1 id="collegeNameBn">College Name</h1>
+<p id="collegeNameEn">College English</p>
+<p class="estd" id="collegeEstablished">স্থাপিত: 2025 খ্রি.</p>
 </div>
 
-<div class="dept" id="studentSubject">
-ব্যবস্থাপনা বিভাগ
-</div>
+<div class="dept" id="deptText">ব্যবস্থাপনা বিভাগ</div>
 
 </div>
 
 <div class="photo-box">
-<img id="studentPhoto"
-src="https://raw.githubusercontent.com/thenomandev/media/main/Student%20card/Profile%20pic.jpg">
+<img id="studentPhoto">
 </div>
 
 <div class="student-name" id="studentName">
-আব্দুল্লাহ-আল নোমান
+Student Name
 </div>
 
 <div class="info">
-
-<div class="info-row">
-<div class="label">শ্রেণি</div>
-<div>: </div>
-<div id="studentClass">স্নাতক (সম্মান)</div>
-</div>
-
-<div class="info-row">
-<div class="label">রোল</div>
-<div>: </div>
-<div id="studentRoll">১৯২৬১১১</div>
-</div>
-
-<div class="info-row">
-<div class="label">সেশন</div>
-<div>: </div>
-<div id="studentSession">২০১৯-২০</div>
-</div>
-
-<div class="info-row">
-<div class="label">মেয়াদ</div>
-<div>: </div>
-<div id="studentExpiry">ডিসেম্বর ২০২৭</div>
-</div>
-
-<div class="info-row">
-<div class="label">মোবাইল</div>
-<div>: </div>
-<div id="studentMobile">০১৯৩০-১১১১১১</div>
-</div>
-
+<div class="info-row"><div class="label">শ্রেণি</div><div>:</div><div id="studentClass">-</div></div>
+<div class="info-row"><div class="label">রোল</div><div>:</div><div id="studentRoll">-</div></div>
+<div class="info-row"><div class="label">সেশন</div><div>:</div><div id="studentSession">-</div></div>
+<div class="info-row"><div class="label">মেয়াদ</div><div>:</div><div id="studentExpiry">-</div></div>
+<div class="info-row"><div class="label">মোবাইল</div><div>:</div><div id="studentMobile">-</div></div>
 </div>
 
 <div class="signature">
-<img id="principalSignature"
-src="https://raw.githubusercontent.com/thenomandev/media/main/Student%20card/Principal%20signature%20.png">
+<img id="principalSignature">
 <p>অধ্যক্ষ</p>
 </div>
 
@@ -297,532 +216,11 @@ src="https://raw.githubusercontent.com/thenomandev/media/main/Student%20card/Pri
 
 </div>
 
-<!-- BACK CARD -->
-
-<div class="id-card">
-
-<div class="top-wave"></div>
-
-<div class="back-content">
-
-<div class="back-row">
-<div class="back-label">পিতা</div>
-<div>: </div>
-<div id="studentFather">মোঃ সফিউল আজম খান</div>
-</div>
-
-<div class="back-row">
-<div class="back-label">মাতা</div>
-<div>: </div>
-<div id="studentMother">মোসাঃ শাহনাজ পারভীন</div>
-</div>
-
-<div class="back-row">
-<div class="back-label">স্থায়ী ঠিকানা</div>
-<div>: </div>
-<div id="studentAddress">রাজাপুর, ঝালকাঠি</div>
-</div>
-
-<div class="back-row">
-<div class="back-label">জরুরি যোগাযোগ</div>
-<div>: </div>
-<div id="studentEmergency">০১৭১০-২২২২২২</div>
-</div>
-
-<div class="blood" id="studentBlood">
-ব্লাড গ্রুপ: B+
-</div>
-
-
-<div class="notice">
-
-<p class="first">
-এই কার্ডটি হস্তান্তরযোগ্য নয়।
-</p>
-
-<p>
-এটি পরিত্যক্ত অবস্থায় পাওয়া গেলে
-</p>
-
-<p>
-নিম্নোক্ত ঠিকানায় পৌঁছানোর অনুরোধ রইলো।
-</p>
-
-</div>
-
-<div class="qr">
-<img id="qrCode"
-src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=StudentID">
-</div>
-
-<div class="college">
-<h2>বরিশাল সরকারি কলেজ, বরিশাল</h2>
-<p>ফোন: ০২৪৭৮৮-৬৪৬১৪</p>
-<p>ই-মেইল: principal_gbc@yahoo.com</p>
-</div>
-
-</div>
-
-<div class="footer">
-ওয়েবসাইট: www.gbc.gov.bd
-</div>
-
-</div>
-
-<button class="btn" onclick="downloadPDF()">
-<i class="fa-solid fa-file-pdf"></i>
-Download ID Card
+<button class="btn" onclick="window.print()">
+Print Card
 </button>
 
-<div class="developer-section">
+<script type="module" src="js/app.js"></script>
 
-<div class="developer-text">
-Development: @thenomandev
-</div>
-
-<div class="dev-subtitle">Premium Student ID Card Studio</div>
-<div class="dev-version">Version 2.0 • Professional Edition</div>
-<div class="dev-copy">Copyright © 2026 ThenomanDev. All Rights Reserved.</div>
-<div class="dev-contact">Connect With Us</div>
-
-<div class="social-icons">
-
-<a href="https://www.facebook.com/nknoman20"
-target="_blank"
-class="social facebook"
-title="Facebook">
-<i class="fa-brands fa-facebook-f"></i>
-</a>
-
-<a href="https://www.instagram.com/nknoman20"
-target="_blank"
-class="social instagram"
-title="Instagram">
-<i class="fa-brands fa-instagram"></i>
-</a>
-
-<a href="https://wa.me/8801930474720"
-target="_blank"
-class="social whatsapp"
-title="WhatsApp">
-<i class="fa-brands fa-whatsapp"></i>
-</a>
-
-<a href="https://t.me/thenomandev"
-target="_blank"
-class="social telegram"
-title="Telegram">
-<i class="fa-brands fa-telegram"></i>
-</a>
-
-<a href="mailto:thenomandev@gmail.com"
-class="social email"
-title="Email">
-<i class="fa-solid fa-envelope"></i>
-</a>
-
-</div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-<script type="module">
-import { loadDatabase } from "./js/college-service.js";
-
-let appData = {
-  colleges: {},
-  settings: {
-    defaultLogoMode: "transparent",
-    defaultTheme: "purple"
-  },
-  selectedCollege: null
-};
-
-let logoX = 0;
-let logoY = 0;
-let logoSize = 100;
-
-let headerX = 0;
-let headerY = 0;
-let headerSize = 100;
-
-window.toggleCollegeDropdown = function(){
-  const dropdown = document.getElementById("collegeDropdown");
-
-  if(dropdown.style.display === "block"){
-    dropdown.style.display = "none";
-  }else{
-    filterCollegeList();
-    dropdown.style.display = "block";
-  }
-};
-
-window.filterCollegeList = function(){
-  const input = document.getElementById("collegeSearch").value.toLowerCase();
-  const dropdown = document.getElementById("collegeDropdown");
-
-  dropdown.innerHTML = "";
-
-  Object.keys(appData.colleges).forEach((key)=>{
-    const college = appData.colleges[key];
-    const aliases = college.aliases || [];
-
-    const aliasMatch = aliases.some(alias =>
-      alias.toLowerCase().includes(input)
-    );
-
-    const match =
-      key.toLowerCase().includes(input) ||
-      (college.english || "").toLowerCase().includes(input) ||
-      (college.bangla || "").toLowerCase().includes(input) ||
-      aliasMatch;
-
-    if(match){
-      const item = document.createElement("div");
-      item.className = "college-item";
-
-      let label = college.english || key;
-
-      if(college.featured){
-        label = "⭐ " + label;
-      }
-
-      item.innerText = label;
-
-      item.onclick = function(){
-        document.getElementById("collegeSearch").value = college.english || key;
-        dropdown.style.display = "none";
-        applyCollegePreset();
-      };
-
-      dropdown.appendChild(item);
-    }
-  });
-};
-
-document.addEventListener("click", function(e){
-  const search = document.getElementById("collegeSearch");
-  const dropdown = document.getElementById("collegeDropdown");
-
-  if(
-    search &&
-    dropdown &&
-    !search.contains(e.target) &&
-    !dropdown.contains(e.target)
-  ){
-    dropdown.style.display = "none";
-  }
-});
-
-window.applyCollegePreset = function(){
-  let inputValue = document.getElementById("collegeSearch").value.toLowerCase();
-  let selectedCollege = null;
-
-  Object.keys(appData.colleges).forEach((key)=>{
-    const college = appData.colleges[key];
-    const aliases = college.aliases || [];
-
-    const aliasMatch = aliases.some(alias =>
-      alias.toLowerCase() === inputValue
-    );
-
-    if(
-      key.toLowerCase() === inputValue ||
-      (college.english || "").toLowerCase() === inputValue ||
-      (college.bangla || "").toLowerCase() === inputValue ||
-      aliasMatch
-    ){
-      selectedCollege = college;
-      appData.selectedCollege = college;
-    }
-  });
-
-  if(!selectedCollege) return;
-
-  document.getElementById("collegeBanglaInput").value = selectedCollege.bangla || "";
-  document.getElementById("collegeEnglishInput").value = selectedCollege.english || "";
-  document.getElementById("collegeEstInput").value = selectedCollege.established || "";
-  document.getElementById("collegePhoneInput").value = selectedCollege.phone || "";
-  document.getElementById("collegeEmailInput").value = selectedCollege.email || "";
-  document.getElementById("collegeWebsiteInput").value = selectedCollege.website || "";
-
-  document.getElementById("logoMode").value =
-    selectedCollege.defaultLogoMode || "transparent";
-
-  document.getElementById("collegeLogo").src =
-    document.getElementById("logoMode").value === "transparent"
-      ? selectedCollege.transparentLogo
-      : selectedCollege.logo;
-
-  document.getElementById("principalSignature").src =
-    selectedCollege.signature || "";
-
-  if(selectedCollege.watermark){
-    document.getElementById("cardWatermark").src = selectedCollege.watermark;
-    document.getElementById("cardWatermark").style.display = "block";
-  }else{
-    document.getElementById("cardWatermark").style.display = "none";
-  }
-
-  const design = selectedCollege.design || {};
-
-  logoX = design.logoPosX || 0;
-  logoY = design.logoPosY || 0;
-  logoSize = design.logoSize || 100;
-
-  headerX = design.headerPosX || 0;
-  headerY = design.headerPosY || 0;
-  headerSize = design.headerSize || 100;
-
-  document.getElementById("logoBox").style.transform =
-    `translate(${logoX}px, ${logoY}px) scale(${logoSize/100})`;
-
-  document.querySelector(".header-text").style.transform =
-    `translate(${headerX}px, ${headerY}px) scale(${headerSize/100})`;
-
-  updateCard();
-  updateLogoMode();
-};
-
-window.updateLogoMode = function(){
-  const logoMode = document.getElementById("logoMode").value;
-  const logoBox = document.getElementById("logoBox");
-  const selectedCollege = appData.selectedCollege;
-
-  if(logoMode === "box"){
-    logoBox.classList.remove("transparent");
-  }else{
-    logoBox.classList.add("transparent");
-  }
-
-  if(selectedCollege){
-    document.getElementById("collegeLogo").src =
-      logoMode === "transparent"
-        ? selectedCollege.transparentLogo
-        : selectedCollege.logo;
-  }
-};
-
-window.updateCard = function(){
-  let name = document.getElementById("nameInput").value;
-  let roll = document.getElementById("rollInput").value;
-  let studentClass = document.getElementById("classInput").value;
-  let subject = document.getElementById("subjectInput").value;
-  let session = document.getElementById("sessionInput").value;
-  let expiry = document.getElementById("expiryInput").value;
-  let mobile = document.getElementById("mobileInput").value;
-  let emergency = document.getElementById("emergencyInput").value;
-  let father = document.getElementById("fatherInput").value;
-  let mother = document.getElementById("motherInput").value;
-  let address = document.getElementById("addressInput").value;
-  let blood = document.getElementById("bloodInput").value;
-  let qrText = document.getElementById("qrInput").value;
-
-  let collegeBangla = document.getElementById("collegeBanglaInput").value;
-  let collegeEnglish = document.getElementById("collegeEnglishInput").value;
-  let collegeEst = document.getElementById("collegeEstInput").value;
-  let collegePhone = document.getElementById("collegePhoneInput").value;
-  let collegeEmail = document.getElementById("collegeEmailInput").value;
-  let collegeWebsite = document.getElementById("collegeWebsiteInput").value;
-
-  document.getElementById("studentName").innerText = name;
-  document.getElementById("studentRoll").innerText = roll;
-  document.getElementById("studentClass").innerText = studentClass;
-  document.getElementById("studentSubject").innerText = subject;
-  document.getElementById("studentSession").innerText = session;
-  document.getElementById("studentExpiry").innerText = expiry;
-  document.getElementById("studentMobile").innerText = mobile;
-  document.getElementById("studentEmergency").innerText = emergency;
-  document.getElementById("studentFather").innerText = father;
-  document.getElementById("studentMother").innerText = mother;
-  document.getElementById("studentAddress").innerText = address;
-  document.getElementById("studentBlood").innerText = "ব্লাড গ্রুপ: " + blood;
-document.querySelector(".header-text h1").innerText =
-    collegeBangla || "বরিশাল সরকারি কলেজ, বরিশাল";
-
-  document.querySelector(".header-text p").innerText =
-    collegeEnglish || "Barishal Govt. College, Barishal";
-
-  document.querySelector(".estd").innerText =
-    collegeEst ? "স্থাপিত: " + collegeEst + " খ্রি." : "স্থাপিত: ১৯৬৩ খ্রি.";
-
-  document.querySelector(".college h2").innerText =
-    collegeBangla || "বরিশাল সরকারি কলেজ, বরিশাল";
-
-  document.querySelectorAll(".college p")[0].innerText =
-    "ফোন: " + collegePhone;
-
-  document.querySelectorAll(".college p")[1].innerText =
-    "ই-মেইল: " + collegeEmail;
-
-  document.querySelector(".footer").innerText =
-    "ওয়েবসাইট: " + collegeWebsite;
-
-  document.getElementById("qrCode").src =
-    "https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=" +
-    encodeURIComponent(qrText || "StudentID");
-};
-
-document.getElementById("photoInput").addEventListener("change", function(e){
-  const file = e.target.files[0];
-  if(file){
-    const reader = new FileReader();
-    reader.onload = function(event){
-      document.getElementById("studentPhoto").src = event.target.result;
-    };
-    reader.readAsDataURL(file);
-  }
-});
-
-document.getElementById("collegeLogoInput").addEventListener("change", function(e){
-  const file = e.target.files[0];
-  if(file){
-    const reader = new FileReader();
-    reader.onload = function(event){
-      document.getElementById("collegeLogo").src = event.target.result;
-    };
-    reader.readAsDataURL(file);
-  }
-});
-
-document.getElementById("principalSignatureInput").addEventListener("change", function(e){
-  const file = e.target.files[0];
-  if(file){
-    const reader = new FileReader();
-    reader.onload = function(event){
-      document.getElementById("principalSignature").src = event.target.result;
-    };
-    reader.readAsDataURL(file);
-  }
-});
-
-window.moveLogo = function(direction){
-  const target = document.getElementById("adjustTarget").value;
-  const element = target === "logo"
-    ? document.getElementById("logoBox")
-    : document.querySelector(".header-text");
-
-  if(target === "logo"){
-    if(direction === "up") logoY -= 5;
-    if(direction === "down") logoY += 5;
-    if(direction === "left") logoX -= 5;
-    if(direction === "right") logoX += 5;
-
-    element.style.transform =
-      `translate(${logoX}px, ${logoY}px) scale(${logoSize/100})`;
-  }else{
-    if(direction === "up") headerY -= 5;
-    if(direction === "down") headerY += 5;
-    if(direction === "left") headerX -= 5;
-    if(direction === "right") headerX += 5;
-
-    element.style.transform =
-      `translate(${headerX}px, ${headerY}px) scale(${headerSize/100})`;
-  }
-};
-
-window.resizeLogo = function(action){
-  const target = document.getElementById("adjustTarget").value;
-  const element = target === "logo"
-    ? document.getElementById("logoBox")
-    : document.querySelector(".header-text");
-
-  if(target === "logo"){
-    if(action === "plus") logoSize += 10;
-    if(action === "minus" && logoSize > 30) logoSize -= 10;
-
-    element.style.transform =
-      `translate(${logoX}px, ${logoY}px) scale(${logoSize/100})`;
-  }else{
-    if(action === "plus") headerSize += 10;
-    if(action === "minus" && headerSize > 30) headerSize -= 10;
-
-    element.style.transform =
-      `translate(${headerX}px, ${headerY}px) scale(${headerSize/100})`;
-  }
-};
-
-window.resetAdjust = function(){
-  logoX = 0;
-  logoY = 0;
-  logoSize = 100;
-
-  headerX = 0;
-  headerY = 0;
-  headerSize = 100;
-
-  document.getElementById("logoBox").style.transform =
-    "translate(0px,0px) scale(1)";
-
-  document.querySelector(".header-text").style.transform =
-    "translate(0px,0px) scale(1)";
-};
-
-window.setTheme = function(theme){
-  const frontHeader = document.querySelector(".front-header");
-  const topWave = document.querySelector(".top-wave");
-  const bottom = document.querySelector(".front-bottom-design");
-  const footer = document.querySelector(".footer");
-  const dept = document.getElementById("studentSubject");
-
-  let header = "";
-  let subject = "#fff";
-
-  if(theme === "purple") header = "linear-gradient(135deg,#7b008a,#d100d1)";
-  if(theme === "blue") header = "linear-gradient(135deg,#003c8f,#00a2ff)";
-  if(theme === "green") header = "linear-gradient(135deg,#0b7a3b,#19c15f)";
-  if(theme === "red") header = "linear-gradient(135deg,#8f0000,#ff3d3d)";
-  if(theme === "gold"){
-    header = "linear-gradient(135deg,#111,#d4af37)";
-    subject = "#ffd700";
-  }
-
-  frontHeader.style.background = header;
-  topWave.style.background = header;
-  bottom.style.background = header;
-  footer.style.background = header;
-  dept.style.color = subject;
-};
-
-window.downloadPDF = function(){
-  const frontCard = document.querySelectorAll(".id-card")[0];
-  const backCard = document.querySelectorAll(".id-card")[1];
-
-  const wrapper = document.createElement("div");
-  wrapper.style.background = "#ffffff";
-  wrapper.style.padding = "20px";
-
-  const frontClone = frontCard.cloneNode(true);
-  const backClone = backCard.cloneNode(true);
-
-  frontClone.style.marginBottom = "40px";
-
-  wrapper.appendChild(frontClone);
-  wrapper.appendChild(backClone);
-
-  html2pdf().set({
-    margin: 0,
-    filename: "Student-ID-Card.pdf",
-    image: { type: "jpeg", quality: 1 },
-    html2canvas: {
-      scale: 4,
-      useCORS: true,
-      backgroundColor: "#ffffff"
-    },
-    jsPDF: {
-      unit: "mm",
-      format: "a4",
-      orientation: "portrait"
-    }
-  }).from(wrapper).save();
-};
-
-document.getElementById("logoMode").value = "transparent";
-
-setTheme(appData.settings.defaultTheme);
-
-loadDatabase(appData).then(()=>{
-  updateLogoMode();
-  updateCard();
-});
-</script>
+</body>
+</html>

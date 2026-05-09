@@ -17,24 +17,20 @@ onAuthStateChanged
 import {
 ref,
 uploadBytesResumable,
-getDownloadURL,
-deleteObject,
-listAll
+getDownloadURL
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-storage.js";
 
 const collegeSelect = document.getElementById("collegeSelect");
 const adminDropdown = document.getElementById("adminCollegeDropdown");
+const previewWrap = document.getElementById("adminPreviewWrap");
 
 const totalCollegesEl = document.getElementById("totalColleges");
 const activeCollegesEl = document.getElementById("activeColleges");
 const featuredCollegesEl = document.getElementById("featuredColleges");
-const storageUsedEl = document.getElementById("storageUsed");
 
 const modal = document.getElementById("collegeListModal");
 const modalTitle = document.getElementById("modalTitle");
 const modalList = document.getElementById("modalCollegeList");
-
-const previewWrap = document.getElementById("adminPreviewWrap");
 
 let allColleges = {};
 let currentModalType = "all";
@@ -47,64 +43,15 @@ let headerX = 0;
 let headerY = 0;
 let headerSize = 100;
 
-let logoutTimer = null;
-
-function resetLogoutTimer(){
-clearTimeout(logoutTimer);
-
-logoutTimer = setTimeout(async ()=>{
-await signOut(auth);
-window.location.href="login.html";
-},30 * 60 * 1000);
-}
-
-document.addEventListener("click", resetLogoutTimer);
-document.addEventListener("keydown", resetLogoutTimer);
-document.addEventListener("touchstart", resetLogoutTimer);
+let currentCollegeData = null;
 
 onAuthStateChanged(auth,(user)=>{
 if(!user){
 window.location.href="login.html";
 return;
 }
-
-resetLogoutTimer();
 loadColleges();
 });
-
-async function calculateStorageUsage(){
-try{
-const rootRef = ref(storage,"colleges");
-const result = await listAll(rootRef);
-
-let totalFiles = result.items.length;
-
-storageUsedEl.innerText = totalFiles + " Files";
-}catch{
-storageUsedEl.innerText = "Unavailable";
-}
-}
-
-async function updateAnalytics(){
-let total = 0;
-let active = 0;
-let featured = 0;
-
-Object.keys(allColleges).forEach((id)=>{
-const data = allColleges[id];
-
-total++;
-
-if(data.isActive) active++;
-if(data.isFeatured) featured++;
-});
-
-totalCollegesEl.innerText = total;
-activeCollegesEl.innerText = active;
-featuredCollegesEl.innerText = featured;
-
-calculateStorageUsage();
-}
 
 async function loadColleges(){
 allColleges = {};
@@ -117,6 +64,24 @@ allColleges[docSnap.id] = docSnap.data();
 
 updateAnalytics();
 renderPreview();
+}
+
+function updateAnalytics(){
+let total = 0;
+let active = 0;
+let featured = 0;
+
+Object.keys(allColleges).forEach((id)=>{
+const data = allColleges[id];
+total++;
+
+if(data.isActive) active++;
+if(data.isFeatured) featured++;
+});
+
+totalCollegesEl.innerText = total;
+activeCollegesEl.innerText = active;
+featuredCollegesEl.innerText = featured;
 }
 
 window.toggleAdminDropdown = function(){
@@ -222,7 +187,7 @@ modalList.appendChild(item);
 }
 
 window.loadCollege = async function(){
-const id = collegeSelect.dataset.selectedId || collegeSelect.value;
+const id = collegeSelect.dataset.selectedId;
 
 if(!id){
 alert("Select college");
@@ -237,6 +202,7 @@ return;
 }
 
 const data = snap.data();
+currentCollegeData = data;
 
 document.getElementById("collegeNameBn").value = data.collegeNameBn || "";
 document.getElementById("collegeNameEn").value = data.collegeNameEn || "";
@@ -246,17 +212,13 @@ document.getElementById("email").value = data.email || "";
 document.getElementById("website").value = data.website || "";
 document.getElementById("address").value = data.address || "";
 document.getElementById("displayOrder").value = data.displayOrder || "";
-document.getElementById("defaultLogoMode").value =
-data.defaultLogoMode || "transparent";
+document.getElementById("defaultLogoMode").value = data.defaultLogoMode || "transparent";
 
 document.getElementById("aliases").value =
 (data.aliases || []).join("\n");
 
-document.getElementById("isActive").checked =
-data.isActive !== false;
-
-document.getElementById("isFeatured").checked =
-data.isFeatured === true;
+document.getElementById("isActive").checked = data.isActive !== false;
+document.getElementById("isFeatured").checked = data.isFeatured === true;
 
 const design = data.design || {};
 
@@ -286,7 +248,7 @@ if(direction==="left") headerX -= 5;
 if(direction==="right") headerX += 5;
 }
 
-renderPreview();
+renderPreview(currentCollegeData);
 };
 
 window.resizeDesign = function(action){
@@ -300,7 +262,7 @@ if(action==="plus") headerSize += 10;
 if(action==="minus" && headerSize > 30) headerSize -= 10;
 }
 
-renderPreview();
+renderPreview(currentCollegeData);
 };
 
 window.resetDesign = function(){
@@ -312,7 +274,7 @@ headerX = 0;
 headerY = 0;
 headerSize = 100;
 
-renderPreview();
+renderPreview(currentCollegeData);
 };
 
 function renderPreview(data=null){
@@ -324,7 +286,7 @@ current.defaultLogoMode ||
 "transparent";
 
 const logo =
-logoMode === "transparent"
+logoMode==="transparent"
 ? (current.transparentLogo || "")
 : (current.whiteLogo || "");
 
@@ -332,7 +294,7 @@ const signature = current.principalSignature || "";
 const watermark = current.watermark || "";
 
 previewWrap.innerHTML = `
-<div class="id-card" style="margin:auto;transform:scale(0.92);transform-origin:top center;">
+<div class="id-card">
 
 ${watermark ? `
 <img
@@ -345,7 +307,6 @@ transform:translate(-50%,-50%);
 max-width:75%;
 max-height:75%;
 opacity:0.08;
-pointer-events:none;
 z-index:1;
 "
 >
@@ -354,18 +315,12 @@ z-index:1;
 <div class="front-header">
 
 <div class="logo ${logoMode==="transparent" ? "transparent" : ""}"
-style="
-transform:translate(${logoX}px,${logoY}px) scale(${logoSize/100});
-">
+style="transform:translate(${logoX}px,${logoY}px) scale(${logoSize/100});">
 <img src="${logo}">
 </div>
 
-<div
-class="header-text"
-style="
-transform:translate(${headerX}px,${headerY}px) scale(${headerSize/100});
-"
->
+<div class="header-text"
+style="transform:translate(${headerX}px,${headerY}px) scale(${headerSize/100});">
 <h1>${current.collegeNameBn || "College Name"}</h1>
 <p>${current.collegeNameEn || "College English"}</p>
 <p class="estd">স্থাপিত: ${current.established || "2025"} খ্রি.</p>
@@ -392,8 +347,6 @@ margin:auto;
 <div class="info-row"><div class="label">শ্রেণি</div><div>:</div><div>Demo</div></div>
 <div class="info-row"><div class="label">রোল</div><div>:</div><div>Demo</div></div>
 <div class="info-row"><div class="label">সেশন</div><div>:</div><div>Demo</div></div>
-<div class="info-row"><div class="label">মেয়াদ</div><div>:</div><div>Demo</div></div>
-<div class="info-row"><div class="label">মোবাইল</div><div>:</div><div>Demo</div></div>
 </div>
 
 <div class="signature">
@@ -408,22 +361,15 @@ margin:auto;
 }
 
 window.saveCollege = async function(){
-const id = collegeSelect.dataset.selectedId || collegeSelect.value;
+const id = collegeSelect.dataset.selectedId;
 
 if(!id){
 alert("Select college");
 return;
 }
 
-const aliases = document.getElementById("aliases").value
-.split("\n")
-.map(x=>x.trim())
-.filter(Boolean);
-
 const existingSnap = await getDoc(doc(db,"colleges",id));
-const existingData = existingSnap.exists()
-? existingSnap.data()
-: {};
+const existingData = existingSnap.exists() ? existingSnap.data() : {};
 
 await setDoc(doc(db,"colleges",id),{
 collegeNameBn: document.getElementById("collegeNameBn").value,
@@ -435,7 +381,7 @@ website: document.getElementById("website").value,
 address: document.getElementById("address").value,
 displayOrder: Number(document.getElementById("displayOrder").value || 9999),
 defaultLogoMode: document.getElementById("defaultLogoMode").value,
-aliases: aliases,
+aliases: document.getElementById("aliases").value.split("\n").map(x=>x.trim()).filter(Boolean),
 isActive: document.getElementById("isActive").checked,
 isFeatured: document.getElementById("isFeatured").checked,
 
@@ -454,7 +400,7 @@ principalSignature: existingData.principalSignature || "",
 watermark: existingData.watermark || ""
 });
 
-alert("Saved successfully");
+alert("Saved");
 loadColleges();
 };
 
@@ -463,7 +409,7 @@ const id = document.getElementById("newCollegeId").value.trim();
 const name = document.getElementById("newCollegeName").value.trim();
 
 if(!id || !name){
-alert("Fill all fields");
+alert("Fill fields");
 return;
 }
 
@@ -480,7 +426,6 @@ defaultLogoMode:"transparent",
 aliases:[],
 isActive:true,
 isFeatured:false,
-
 design:{
 logoPosX:0,
 logoPosY:0,
@@ -489,7 +434,6 @@ headerPosX:0,
 headerPosY:0,
 headerSize:100
 },
-
 transparentLogo:"",
 whiteLogo:"",
 principalSignature:"",
@@ -501,11 +445,11 @@ loadColleges();
 };
 
 window.deleteCollege = async function(){
-const id = collegeSelect.dataset.selectedId || collegeSelect.value;
+const id = collegeSelect.dataset.selectedId;
 
 if(!id) return;
 
-if(!confirm("Delete this college?")) return;
+if(!confirm("Delete college?")) return;
 
 await deleteDoc(doc(db,"colleges",id));
 
@@ -524,7 +468,7 @@ if(!file) return false;
 const allowed = ["image/png","image/jpeg","image/webp"];
 
 if(!allowed.includes(file.type)){
-alert("Only PNG/JPG/WEBP allowed");
+alert("Only PNG/JPG/WEBP");
 return false;
 }
 
@@ -541,21 +485,19 @@ document.getElementById(progressId).style.display = "block";
 document.getElementById(fillId).style.width = percent + "%";
 }
 
-async function uploadCollegeImage(file, folderPath, oldUrl, progressId, fillId){
+async function uploadCollegeImage(file, folderPath, progressId, fillId){
 if(!validateImage(file)) return null;
 
 const storageRef = ref(storage, folderPath);
 const uploadTask = uploadBytesResumable(storageRef, file);
 
 return new Promise((resolve,reject)=>{
-
 uploadTask.on("state_changed",
 
 (snapshot)=>{
 const percent = Math.round(
 (snapshot.bytesTransferred / snapshot.totalBytes) * 100
 );
-
 setProgress(progressId, fillId, percent);
 },
 
@@ -565,35 +507,23 @@ reject(error);
 },
 
 async ()=>{
-try{
-
-if(oldUrl){
-try{
-const oldRef = ref(storage, oldUrl);
-await deleteObject(oldRef);
-}catch(e){}
-}
-
-const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-resolve(downloadURL);
-
-}catch(err){
-reject(err);
-}
+const url = await getDownloadURL(uploadTask.snapshot.ref);
+resolve(url);
 }
 );
 });
 }
+
 
 async function handleFileUpload(inputId, dbField, fileName, progressId, fillId){
 const input = document.getElementById(inputId);
 
 input.addEventListener("change", async function(){
 
-const id = collegeSelect.dataset.selectedId || collegeSelect.value;
+const id = collegeSelect.dataset.selectedId;
 
 if(!id){
-alert("Select college first");
+alert("Load college first");
 input.value = "";
 return;
 }
@@ -602,130 +532,72 @@ const file = input.files[0];
 if(!file) return;
 
 const snap = await getDoc(doc(db,"colleges",id));
-
-if(!snap.exists()){
-alert("College not found");
-return;
-}
-
 const data = snap.data();
 
 const url = await uploadCollegeImage(
 file,
 `colleges/${id}/${fileName}`,
-data[dbField],
 progressId,
 fillId
 );
-
-if(!url) return;
 
 await setDoc(doc(db,"colleges",id),{
 ...data,
 [dbField]:url
 });
 
-alert("Upload successful");
+currentCollegeData = {
+...data,
+[dbField]:url
+};
+
+renderPreview(currentCollegeData);
 
 input.value = "";
 
 setTimeout(()=>{
 document.getElementById(progressId).style.display="none";
 document.getElementById(fillId).style.width="0%";
-},1200);
-
-loadCollege();
+},1000);
 });
 }
 
-handleFileUpload(
-"transparentLogoFile",
-"transparentLogo",
-"transparent-logo",
-"transparentProgress",
-"transparentProgressFill"
-);
-
-handleFileUpload(
-"whiteLogoFile",
-"whiteLogo",
-"white-logo",
-"whiteProgress",
-"whiteProgressFill"
-);
-
-handleFileUpload(
-"signatureFile",
-"principalSignature",
-"signature",
-"signatureProgress",
-"signatureProgressFill"
-);
-
-handleFileUpload(
-"watermarkFile",
-"watermark",
-"watermark",
-"watermarkProgress",
-"watermarkProgressFill"
-);
+handleFileUpload("transparentLogoFile","transparentLogo","transparent-logo","transparentProgress","transparentProgressFill");
+handleFileUpload("whiteLogoFile","whiteLogo","white-logo","whiteProgress","whiteProgressFill");
+handleFileUpload("signatureFile","principalSignature","signature","signatureProgress","signatureProgressFill");
+handleFileUpload("watermarkFile","watermark","watermark","watermarkProgress","watermarkProgressFill");
 
 window.exportBackup = async function(){
 const querySnapshot = await getDocs(collection(db,"colleges"));
 
-const backup = {
-exportedAt:new Date().toISOString(),
-colleges:{}
-};
+const backup = { colleges:{} };
 
 querySnapshot.forEach((docSnap)=>{
 backup.colleges[docSnap.id] = docSnap.data();
 });
 
-const blob = new Blob(
-[JSON.stringify(backup,null,2)],
-{type:"application/json"}
-);
-
+const blob = new Blob([JSON.stringify(backup,null,2)],{type:"application/json"});
 const url = URL.createObjectURL(blob);
 
 const a = document.createElement("a");
 a.href = url;
-a.download = "student-id-cms-backup.json";
+a.download = "student-id-backup.json";
 a.click();
 
 URL.revokeObjectURL(url);
 };
 
-document.getElementById("importBackup")
-.addEventListener("change", async function(e){
-
+document.getElementById("importBackup").addEventListener("change",async function(e){
 const file = e.target.files[0];
 if(!file) return;
 
-const ok = confirm("Import backup?");
-if(!ok) return;
-
 const text = await file.text();
-
-let json;
-
-try{
-json = JSON.parse(text);
-}catch{
-alert("Invalid JSON");
-return;
-}
-
-if(!json.colleges){
-alert("Invalid backup");
-return;
-}
+const json = JSON.parse(text);
 
 for(const id in json.colleges){
 await setDoc(doc(db,"colleges",id),json.colleges[id]);
 }
 
-alert("Backup imported");
+alert("Imported");
 loadColleges();
 });
