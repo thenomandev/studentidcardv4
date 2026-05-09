@@ -23,7 +23,7 @@ return;
 collegesArray.push({
 id: docSnap.id,
 featured: data.isFeatured === true,
-displayOrder: data.displayOrder || 9999,
+displayOrder: Number(data.displayOrder || 9999),
 data
 });
 });
@@ -43,6 +43,9 @@ const data = item.data;
 appData.colleges[item.id] = {
 id:item.id,
 
+featured:item.featured,
+displayOrder:item.displayOrder,
+
 bangla:data.collegeNameBn || "",
 english:data.collegeNameEn || "",
 established:data.established || "",
@@ -58,7 +61,9 @@ watermark:data.watermark || "",
 
 defaultLogoMode:data.defaultLogoMode || "transparent",
 
-aliases:data.aliases || [],
+aliases:Array.isArray(data.aliases)
+? data.aliases
+: [],
 
 design:data.design || {
 logoPosX:0,
