@@ -318,62 +318,90 @@ renderPreview();
 function renderPreview(data=null){
 const current = data || {};
 
-const logo =
-current.transparentLogo ||
-current.whiteLogo ||
-"";
+const logoMode =
+document.getElementById("defaultLogoMode")?.value ||
+current.defaultLogoMode ||
+"transparent";
 
-const signature =
-current.principalSignature ||
-"";
+const logo =
+logoMode === "transparent"
+? (current.transparentLogo || "")
+: (current.whiteLogo || "");
+
+const signature = current.principalSignature || "";
+const watermark = current.watermark || "";
 
 previewWrap.innerHTML = `
-<div style="
-width:340px;
-height:540px;
-background:#f4f4f4;
-border-radius:22px;
-overflow:hidden;
-position:relative;
-box-shadow:0 4px 15px rgba(0,0,0,0.2);
-margin:auto;
-">
+<div class="id-card" style="margin:auto;transform:scale(0.92);transform-origin:top center;">
 
-<div style="
-background:linear-gradient(135deg,#7b008a,#d100d1);
-height:165px;
-position:relative;
-color:white;
-text-align:center;
-">
-
-<div style="
+${watermark ? `
+<img
+src="${watermark}"
+style="
 position:absolute;
-left:30px;
-top:40px;
-width:60px;
-height:60px;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+max-width:75%;
+max-height:75%;
+opacity:0.08;
+pointer-events:none;
+z-index:1;
+"
+>
+` : ""}
+
+<div class="front-header">
+
+<div class="logo ${logoMode==="transparent" ? "transparent" : ""}"
+style="
 transform:translate(${logoX}px,${logoY}px) scale(${logoSize/100});
 ">
-<img src="${logo}" style="width:100%;height:100%;object-fit:contain;">
+<img src="${logo}">
 </div>
 
-<div style="
-position:absolute;
-top:35px;
-left:58px;
-width:275px;
+<div
+class="header-text"
+style="
 transform:translate(${headerX}px,${headerY}px) scale(${headerSize/100});
-">
-<h4>${current.collegeNameBn || "College Name"}</h4>
+"
+>
+<h1>${current.collegeNameBn || "College Name"}</h1>
 <p>${current.collegeNameEn || "College English"}</p>
+<p class="estd">স্থাপিত: ${current.established || "2025"} খ্রি.</p>
 </div>
+
+<div class="dept">ব্যবস্থাপনা বিভাগ</div>
 
 </div>
 
-<div style="position:absolute;bottom:20px;right:20px;">
-<img src="${signature}" style="width:80px;">
+<div class="photo-box">
+<div style="
+width:115px;
+height:140px;
+border:3px solid red;
+border-radius:8px;
+background:white;
+margin:auto;
+"></div>
 </div>
+
+<div class="student-name">Student Name</div>
+
+<div class="info">
+<div class="info-row"><div class="label">শ্রেণি</div><div>:</div><div>Demo</div></div>
+<div class="info-row"><div class="label">রোল</div><div>:</div><div>Demo</div></div>
+<div class="info-row"><div class="label">সেশন</div><div>:</div><div>Demo</div></div>
+<div class="info-row"><div class="label">মেয়াদ</div><div>:</div><div>Demo</div></div>
+<div class="info-row"><div class="label">মোবাইল</div><div>:</div><div>Demo</div></div>
+</div>
+
+<div class="signature">
+<img src="${signature}">
+<p>অধ্যক্ষ</p>
+</div>
+
+<div class="front-bottom-design"></div>
 
 </div>
 `;
