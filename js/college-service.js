@@ -37,12 +37,10 @@ return a.displayOrder - b.displayOrder;
 });
 
 collegesArray.forEach((item)=>{
-
 const data = item.data;
 
 appData.colleges[item.id] = {
 id:item.id,
-
 featured:item.featured,
 displayOrder:item.displayOrder,
 
