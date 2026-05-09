@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Student ID Card Generator</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link rel="stylesheet" href="css/main.css">
+
+</head>
+
+<body>
+
+<div class="form-box">
+
+<h2>ID Card Generator</h2>
+
+<div class="input-box">
+<i class="fa-solid fa-user"></i>
+<input type="text" id="nameInput" placeholder="Student Name">
+</div>
+
+<div class="input-box">
+<i class="fa-solid fa-id-card"></i>
+<input type="text" id="rollInput" placeholder="Roll Number">
+</div>
+
+<div class="input-box">
+<i class="fa-solid fa-book"></i>
+<input type="text" id="classInput" placeholder="Class">
+</div>
+
+<div class="input-box">
+<i class="fa-solid fa-graduation-cap"></i>
+<input type="text" id="subjectInput" placeholder="Subject">
+</div>
+
+<div class="input-box">
+<i class="fa-solid fa-calendar"></i>
+<input type="text" id="sessionInput" placeholder="Session">
+</div>
+
+<div class="input-box">
+<i class="fa-solid fa-clock"></i>
+<input type="text" id="expiryInput" placeholder="Expire Date">
+</div>
+
+<div class="input-box">
+<i class="fa-solid fa-phone"></i>
+<input type="text" id="mobileInput" placeholder="Mobile Number">
+</div>
+
+<div class="input-box">
+<i class="fa-solid fa-phone-volume"></i>
+<input type="text" id="emergencyInput" placeholder="Emergency Mobile Number">
+</div>
+
+<div class="input-box">
+<i class="fa-solid fa-user-tie"></i>
+<input type="text" id="fatherInput" placeholder="Father Name">
+</div>
+
+<div class="input-box">
+<i class="fa-solid fa-person-dress"></i>
+<input type="text" id="motherInput" placeholder="Mother Name">
+</div>
+
+<div class="input-box">
+<i class="fa-solid fa-location-dot"></i>
+<input type="text" id="addressInput" placeholder="Address">
+</div>
+
+<div class="input-box">
+<i class="fa-solid fa-droplet"></i>
+<input type="text" id="bloodInput" placeholder="Blood Group">
+</div>
+
+<div class="input-box">
+<i class="fa-solid fa-qrcode"></i>
+<input type="text" id="qrInput" placeholder="QR Code Text">
+</div>
+
+<div class="input-box">
+<i class="fa-solid fa-school"></i>
+<input type="text" id="collegeBanglaInput" placeholder="College Name Bangla">
+</div>
+
+<div class="input-box">
+<i class="fa-solid fa-school"></i>
+<input type="text" id="collegeEnglishInput" placeholder="College Name English">
+</div>
+
+<div class="input-box">
+<i class="fa-solid fa-calendar-days"></i>
+<input type="text" id="collegeEstInput" placeholder="Established Date">
+</div>
+
+<div class="input-box">
+<i class="fa-solid fa-phone"></i>
+<input type="text" id="collegePhoneInput" placeholder="College Number">
+</div>
+
+<div class="input-box">
+<i class="fa-solid fa-envelope"></i>
+<input type="text" id="collegeEmailInput" placeholder="College E-mail">
+</div>
+
+<div class="input-box">
+<i class="fa-solid fa-globe"></i>
+<input type="text" id="collegeWebsiteInput" placeholder="College Website">
+</div>
+
+
+<div class="input-box college-dropdown-box">
+<i class="fa-solid fa-building"></i>
+
+<input
+type="text"
+id="collegeSearch"
+placeholder="Select College"
+autocomplete="off"
+onclick="toggleCollegeDropdown()"
+oninput="filterCollegeList()"
+>
+
+<div id="collegeDropdown" class="college-dropdown"></div>
+</div>
+
+
+<label>Logo Mode</label>
+
+<div class="input-box">
+<i class="fa-solid fa-image"></i>
+<select id="logoMode" onchange="updateLogoMode()">
+<option value="transparent">Transparent Logo</option>
+<option value="box">White Box Logo</option>
+</select>
+</div>
+
+<label>Upload Profile Photo</label>
+<div class="input-box">
+<i class="fa-solid fa-image"></i>
+<input type="file" id="photoInput" accept="image/*">
+</div>
+
+<label>Upload College Logo</label>
+<div class="input-box">
+<i class="fa-solid fa-building-columns"></i>
+<input type="file" id="collegeLogoInput" accept="image/*">
+</div>
+
+<label>Upload Principal Signature</label>
+<div class="input-box">
+<i class="fa-solid fa-signature"></i>
+<input type="file" id="principalSignatureInput" accept="image/*">
+</div>
+
+<label>Card Theme & Logo Adjust</label>
+
+<div class="theme-buttons">
+<button type="button" class="theme-purple" onclick="setTheme('purple')">🟣</button>
+<button type="button" class="theme-blue" onclick="setTheme('blue')">🔵</button>
+<button type="button" class="theme-green" onclick="setTheme('green')">🟢</button>
+<button type="button" class="theme-red" onclick="setTheme('red')">🔴</button>
+
+<button type="button" class="theme-gold" onclick="setTheme('gold')">👑</button>
+<button type="button" class="theme-ocean" onclick="setTheme('ocean')">🌊</button>
+<button type="button" class="theme-sunset" onclick="setTheme('sunset')">🔥</button>
+<button type="button" class="theme-black" onclick="setTheme('black')">⚫</button>
+<button type="button" class="theme-classicblue" onclick="setTheme('classicblue')">🏫</button>
+<button type="button" class="theme-brown" onclick="setTheme('brown')">🟤</button>
+<button type="button" class="theme-violet" onclick="setTheme('violet')">💜</button>
+<button type="button" class="theme-teal" onclick="setTheme('teal')">🩵</button>
+</div>
+
+<div class="input-box">
+<i class="fa-solid fa-crosshairs"></i>
+<select id="adjustTarget">
+<option value="logo">Adjust Logo</option>
+<option value="header">Adjust College Header</option>
+</select>
+</div>
+
+<button type="button" class="reset-btn" onclick="resetAdjust()">
+🔄 Reset Adjustment
+</button>
+
+<div class="logo-controls">
+<button type="button" onclick="moveLogo('up')">⬆️</button>
+<button type="button" onclick="resizeLogo('plus')">➕</button>
+<button type="button" onclick="moveLogo('right')">➡️</button>
+
+<button type="button" onclick="moveLogo('left')">⬅️</button>
+<button type="button" onclick="resizeLogo('minus')">➖</button>
+<button type="button" onclick="moveLogo('down')">⬇️</button>
+</div>
+
+<button class="btn" onclick="updateCard()">
+Generate Card
+</button>
+
+</div>
+
+<!-- FRONT CARD -->
+
+<div class="id-card">
+
+<div class="front-header">
+
+<div class="logo transparent" id="logoBox">
+<img id="collegeLogo"
+src="https://raw.githubusercontent.com/thenomandev/media/main/Student%20ID%20Card%20WebApps/College%20Logo/Barishal%20Govt.%20College/Barishal%20Govt.%20College%20Transparent%20Logo.png">
+</div>
+
+<div class="header-text">
+<h1>বরিশাল সরকারি কলেজ, বরিশাল</h1>
+<p>Barishal Govt. College, Barishal</p>
+<p class="estd">স্থাপিত: ১৯৬৩ খ্রি.</p>
+</div>
+
+<div class="dept" id="studentSubject">
+ব্যবস্থাপনা বিভাগ
+</div>
+
+</div>
+
+<div class="photo-box">
+<img id="studentPhoto"
+src="https://raw.githubusercontent.com/thenomandev/media/main/Student%20card/Profile%20pic.jpg">
+</div>
+
+<div class="student-name" id="studentName">
+আব্দুল্লাহ-আল নোমান
+</div>
+
+<div class="info">
+
+<div class="info-row">
+<div class="label">শ্রেণি</div>
+<div>: </div>
+<div id="studentClass">স্নাতক (সম্মান)</div>
+</div>
+
+<div class="info-row">
+<div class="label">রোল</div>
+<div>: </div>
+<div id="studentRoll">১৯২৬১১১</div>
+</div>
+
+<div class="info-row">
+<div class="label">সেশন</div>
+<div>: </div>
+<div id="studentSession">২০১৯-২০</div>
+</div>
+
+<div class="info-row">
+<div class="label">মেয়াদ</div>
+<div>: </div>
+<div id="studentExpiry">ডিসেম্বর ২০২৭</div>
+</div>
+
+<div class="info-row">
+<div class="label">মোবাইল</div>
+<div>: </div>
+<div id="studentMobile">০১৯৩০-১১১১১১</div>
+</div>
+
+</div>
+
+<div class="signature">
+<img id="principalSignature"
+src="https://raw.githubusercontent.com/thenomandev/media/main/Student%20card/Principal%20signature%20.png">
+<p>অধ্যক্ষ</p>
+</div>
+
+<div class="front-bottom-design"></div>
+
+</div>
+
+<!-- BACK CARD -->
+
+<div class="id-card">
+
+<div class="top-wave"></div>
+
+<div class="back-content">
+
+<div class="back-row">
+<div class="back-label">পিতা</div>
+<div>: </div>
+<div id="studentFather">মোঃ সফিউল আজম খান</div>
+</div>
+
+<div class="back-row">
+<div class="back-label">মাতা</div>
+<div>: </div>
+<div id="studentMother">মোসাঃ শাহনাজ পারভীন</div>
+</div>
+
+<div class="back-row">
+<div class="back-label">স্থায়ী ঠিকানা</div>
+<div>: </div>
+<div id="studentAddress">রাজাপুর, ঝালকাঠি</div>
+</div>
+
+<div class="back-row">
+<div class="back-label">জরুরি যোগাযোগ</div>
+<div>: </div>
+<div id="studentEmergency">০১৭১০-২২২২২২</div>
+</div>
+
+<div class="blood" id="studentBlood">
+ব্লাড গ্রুপ: B+
+</div>
+
+
+<div class="notice">
+
+<p class="first">
+এই কার্ডটি হস্তান্তরযোগ্য নয়।
+</p>
+
+<p>
+এটি পরিত্যক্ত অবস্থায় পাওয়া গেলে
+</p>
+
+<p>
+নিম্নোক্ত ঠিকানায় পৌঁছানোর অনুরোধ রইলো।
+</p>
+
+</div>
+
+<div class="qr">
+<img id="qrCode"
+src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=StudentID">
+</div>
+
+<div class="college">
+<h2>বরিশাল সরকারি কলেজ, বরিশাল</h2>
+<p>ফোন: ০২৪৭৮৮-৬৪৬১৪</p>
+<p>ই-মেইল: principal_gbc@yahoo.com</p>
+</div>
+
+</div>
+
+<div class="footer">
+ওয়েবসাইট: www.gbc.gov.bd
+</div>
+
+</div>
+
+<button class="btn" onclick="downloadPDF()">
+<i class="fa-solid fa-file-pdf"></i>
+Download ID Card
+</button>
+
+<div class="developer-section">
+
+<div class="developer-text">
+Development: @thenomandev
+</div>
+
+<div class="dev-subtitle">Premium Student ID Card Studio</div>
+<div class="dev-version">Version 2.0 • Professional Edition</div>
+<div class="dev-copy">Copyright © 2026 ThenomanDev. All Rights Reserved.</div>
+<div class="dev-contact">Connect With Us</div>
+
+<div class="social-icons">
+
+<a href="https://www.facebook.com/nknoman20"
+target="_blank"
+class="social facebook"
+title="Facebook">
+<i class="fa-brands fa-facebook-f"></i>
+</a>
+
+<a href="https://www.instagram.com/nknoman20"
+target="_blank"
+class="social instagram"
+title="Instagram">
+<i class="fa-brands fa-instagram"></i>
+</a>
+
+<a href="https://wa.me/8801930474720"
+target="_blank"
+class="social whatsapp"
+title="WhatsApp">
+<i class="fa-brands fa-whatsapp"></i>
+</a>
+
+<a href="https://t.me/thenomandev"
+target="_blank"
+class="social telegram"
+title="Telegram">
+<i class="fa-brands fa-telegram"></i>
+</a>
+
+<a href="mailto:thenomandev@gmail.com"
+class="social email"
+title="Email">
+<i class="fa-solid fa-envelope"></i>
+</a>
+
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script type="module">
+import { loadDatabase } from "./js/college-service.js";
+
+let appData = {
+colleges:{},
+settings:{
+defaultLogoMode:"transparent",
+defaultTheme:"purple"
+}
+};
+
+
+window.toggleCollegeDropdown = function(){
+const dropdown=document.getElementById("collegeDropdown");
+
+if(dropdown.style.display==="block"){
+dropdown.style.display="none";
+}else{
+filterCollegeList();
+dropdown.style.display="block";
+}
+}
+
+window.filterCollegeList = function(){
+const input=document.getElementById("collegeSearch").value.toLowerCase();
+const dropdown=document.getElementById("collegeDropdown");
+
+dropdown.innerHTML="";
+
+Object.keys(appData.colleges).forEach((key)=>{
+const college=appData.colleges[key];
+
+const match=
+key.toLowerCase().includes(input) ||
+college.english.toLowerCase().includes(input) ||
+college.bangla.toLowerCase().includes(input);
+
+if(match){
+const item=document.createElement("div");
+item.className="college-item";
+item.innerText=college.english;
+
+item.onclick=function(){
+document.getElementById("collegeSearch").value=college.english;
+dropdown.style.display="none";
+applyCollegePreset();
+};
+
+dropdown.appendChild(item);
+}
+});
+}
+
+window.applyCollegePreset = function(){
+
+let inputValue = document.getElementById("collegeSearch").value;
+let preset = null;
+
+Object.keys(appData.colleges).forEach((key)=>{
+const college=appData.colleges[key];
+
+if(
+key.toLowerCase()===inputValue.toLowerCase() ||
+college.english.toLowerCase()===inputValue.toLowerCase() ||
+college.bangla.toLowerCase()===inputValue.toLowerCase()
+){
+preset=key;
+}
+});
+
+if(!preset || !appData.colleges[preset]) return;
+
+let college = appData.colleges[preset];
+let logoMode = document.getElementById("logoMode").value;
+
+document.getElementById("collegeBanglaInput").value=college.bangla;
+document.getElementById("collegeEnglishInput").value=college.english;
+document.getElementById("collegeEstInput").value=college.established;
+document.getElementById("collegePhoneInput").value=college.phone;
+document.getElementById("collegeEmailInput").value=college.email;
+document.getElementById("collegeWebsiteInput").value=college.website;
+
+document.getElementById("collegeLogo").src =
+logoMode==="transparent"
+? college.transparentLogo
+: college.logo;
+
+document.getElementById("principalSignature").src=college.signature;
+
+updateCard();
+}
+
+window.updateLogoMode = function(){
+let logoMode=document.getElementById("logoMode").value;
+let logoBox=document.getElementById("logoBox");
+let inputValue=document.getElementById("collegeSearch").value;
+let preset=null;
+
+Object.keys(appData.colleges).forEach((key)=>{
+const college=appData.colleges[key];
+
+if(
+key.toLowerCase()===inputValue.toLowerCase() ||
+college.english.toLowerCase()===inputValue.toLowerCase() ||
+college.bangla.toLowerCase()===inputValue.toLowerCase()
+){
+preset=key;
+}
+});
+
+if(logoMode==="box"){
+logoBox.classList.remove("transparent");
+}else{
+logoBox.classList.add("transparent");
+}
+
+let collegeKey = preset || "barishal";
+
+if(appData.colleges && appData.colleges[collegeKey]){
+let college = appData.colleges[collegeKey];
+
+document.getElementById("collegeLogo").src =
+logoMode==="transparent"
+? college.transparentLogo
+: college.logo;
+}
+
+}
+
+window.updateCard = function(){
+
+let name=document.getElementById("nameInput").value;
+let roll=document.getElementById("rollInput").value;
+let studentClass=document.getElementById("classInput").value;
+let subject=document.getElementById("subjectInput").value;
+let session=document.getElementById("sessionInput").value;
+let expiry=document.getElementById("expiryInput").value;
+let mobile=document.getElementById("mobileInput").value;
+let emergency=document.getElementById("emergencyInput").value;
+let father=document.getElementById("fatherInput").value;
+let mother=document.getElementById("motherInput").value;
+let address=document.getElementById("addressInput").value;
+let blood=document.getElementById("bloodInput").value;
+let qrText=document.getElementById("qrInput").value;
+
+let collegeBangla=document.getElementById("collegeBanglaInput").value;
+let collegeEnglish=document.getElementById("collegeEnglishInput").value;
+let collegeEst=document.getElementById("collegeEstInput").value;
+let collegePhone=document.getElementById("collegePhoneInput").value;
+let collegeEmail=document.getElementById("collegeEmailInput").value;
+let collegeWebsite=document.getElementById("collegeWebsiteInput").value;
+
+document.getElementById("studentName").innerText=name;
+document.getElementById("studentRoll").innerText=roll;
+document.getElementById("studentClass").innerText=studentClass;
+document.getElementById("studentSubject").innerText=subject;
+document.getElementById("studentSession").innerText=session;
+document.getElementById("studentExpiry").innerText=expiry;
+document.getElementById("studentMobile").innerText=mobile;
+document.getElementById("studentEmergency").innerText=emergency;
+document.getElementById("studentFather").innerText=father;
+document.getElementById("studentMother").innerText=mother;
+document.getElementById("studentAddress").innerText=address;
+document.getElementById("studentBlood").innerText="ব্লাড গ্রুপ: "+blood;
+
+document.querySelector(".header-text h1").innerText=
+collegeBangla || "বরিশাল সরকারি কলেজ, বরিশাল";
+
+document.querySelector(".header-text p").innerText=
+collegeEnglish || "Barishal Govt. College, Barishal";
+
+document.querySelector(".estd").innerText=
+collegeEst ? "স্থাপিত: "+collegeEst+" খ্রি." : "স্থাপিত: ১৯৬৩ খ্রি.";
+document.querySelector(".college h2").innerText=collegeBangla || "বরিশাল সরকারি কলেজ, বরিশাল";
+document.querySelectorAll(".college p")[0].innerText="ফোন: "+collegePhone;
+document.querySelectorAll(".college p")[1].innerText="ই-মেইল: "+collegeEmail;
+document.querySelector(".footer").innerText="ওয়েবসাইট: "+collegeWebsite;
+
+document.getElementById("qrCode").src=
+"https://api.qrserver.com/v1/create-qr-code/?size=100x100&data="+(qrText || "StudentID");
+}
+
+document.getElementById("photoInput").addEventListener("change",function(e){
+const file=e.target.files[0];
+if(file){
+const reader=new FileReader();
+reader.onload=function(event){
+document.getElementById("studentPhoto").src=event.target.result;
+}
+reader.readAsDataURL(file);
+}
+});
+
+document.getElementById("collegeLogoInput").addEventListener("change",function(e){
+const file=e.target.files[0];
+if(file){
+const reader=new FileReader();
+reader.onload=function(event){
+document.getElementById("collegeLogo").src=event.target.result;
+}
+reader.readAsDataURL(file);
+}
+});
+
+document.getElementById("principalSignatureInput").addEventListener("change",function(e){
+const file=e.target.files[0];
+if(file){
+const reader=new FileReader();
+reader.onload=function(event){
+document.getElementById("principalSignature").src=event.target.result;
+}
+reader.readAsDataURL(file);
+}
+});
+
+let logoX=0;
+let logoY=0;
+let logoSize=100;
+
+let headerX=0;
+let headerY=0;
+let headerSize=100;
+
+window.moveLogo = function(direction){
+
+const target=document.getElementById("adjustTarget").value;
+const element=target==="logo"
+? document.getElementById("logoBox")
+: document.querySelector(".header-text");
+
+if(target==="logo"){
+if(direction==="up") logoY-=5;
+if(direction==="down") logoY+=5;
+if(direction==="left") logoX-=5;
+if(direction==="right") logoX+=5;
+
+element.style.transform =
+`translate(${logoX}px, ${logoY}px) scale(${logoSize/100})`;
+}else{
+if(direction==="up") headerY-=5;
+if(direction==="down") headerY+=5;
+if(direction==="left") headerX-=5;
+if(direction==="right") headerX+=5;
+
+element.style.transform =
+`translate(${headerX}px, ${headerY}px) scale(${headerSize/100})`;
+}
+}
+
+window.resizeLogo = function(action){
+
+const target=document.getElementById("adjustTarget").value;
+const element=target==="logo"
+? document.getElementById("logoBox")
+: document.querySelector(".header-text");
+
+if(target==="logo"){
+if(action==="plus") logoSize+=10;
+if(action==="minus" && logoSize>30) logoSize-=10;
+
+element.style.transform =
+`translate(${logoX}px, ${logoY}px) scale(${logoSize/100})`;
+}else{
+if(action==="plus") headerSize+=10;
+if(action==="minus" && headerSize>30) headerSize-=10;
+
+element.style.transform =
+`translate(${headerX}px, ${headerY}px) scale(${headerSize/100})`;
+}
+}
+
+ window.setTheme = function(theme){
+
+const frontHeader=document.querySelector(".front-header");
+const topWave=document.querySelector(".top-wave");
+const bottom=document.querySelector(".front-bottom-design");
+const footer=document.querySelector(".footer");
+const dept=document.getElementById("studentSubject");
+const icons=document.querySelectorAll(".input-box i");
+const labels=document.querySelectorAll(".form-box label");
+const heading=document.querySelector(".form-box h2");
+const devText=document.querySelector(".developer-text");
+const formBox=document.querySelector(".form-box");
+const devBox=document.querySelector(".developer-section");
+
+let header="";
+let wave="";
+let subject="";
+let btn="";
+let accent="";
+
+if(theme==="purple"){
+header="linear-gradient(135deg,#7b008a,#d100d1)";
+wave=header;
+subject="#ffd500";
+btn="#9800a8";
+accent="#9800a8";
+}
+
+if(theme==="blue"){
+header="linear-gradient(135deg,#003c8f,#00a2ff)";
+wave=header;
+subject="#fff";
+btn="#0057d9";
+accent="#0057d9";
+}
+
+if(theme==="green"){
+header="linear-gradient(135deg,#0b7a3b,#19c15f)";
+wave=header;
+subject="#fff";
+btn="#0b7a3b";
+accent="#0b7a3b";
+}
+
+if(theme==="red"){
+header="linear-gradient(135deg,#8f0000,#ff3d3d)";
+wave=header;
+subject="#fff";
+btn="#b30000";
+accent="#b30000";
+}
+
+if(theme==="gold"){
+header="linear-gradient(135deg,#111,#d4af37)";
+wave=header;
+subject="#ffd700";
+btn="#222";
+accent="#d4af37";
+}
+
+if(theme==="ocean"){
+header="linear-gradient(135deg,#004e92,#00c6ff)";
+wave=header;
+subject="#fff";
+btn="#006fa6";
+accent="#006fa6";
+}
+
+if(theme==="sunset"){
+header="linear-gradient(135deg,#ff512f,#dd2476)";
+wave=header;
+subject="#fff";
+btn="#d63b3b";
+accent="#dd2476";
+}
+
+if(theme==="black"){
+header="linear-gradient(135deg,#111,#444)";
+wave=header;
+subject="#ffd700";
+btn="#222";
+accent="#222";
+}
+
+if(theme==="classicblue"){
+header="linear-gradient(135deg,#082c6c,#0b3d91)";
+wave=header;
+subject="#ffd700";
+btn="#0b3d91";
+accent="#0b3d91";
+}
+
+if(theme==="brown"){
+header="linear-gradient(135deg,#3e2723,#6d4c41)";
+wave=header;
+subject="#ffd700";
+btn="#5d4037";
+accent="#5d4037";
+}
+
+if(theme==="violet"){
+header="linear-gradient(135deg,#4a148c,#7b1fa2)";
+wave=header;
+subject="#fff";
+btn="#6a1b9a";
+accent="#6a1b9a";
+}
+
+if(theme==="teal"){
+header="linear-gradient(135deg,#004d40,#00897b)";
+wave=header;
+subject="#fff";
+btn="#00695c";
+accent="#00695c";
+}
+
+frontHeader.style.background=header;
+topWave.style.background=wave;
+bottom.style.background=header;
+footer.style.background=header;
+dept.style.color=subject;
+
+document.querySelectorAll(".btn, .logo-controls button, .reset-btn").forEach(button=>{
+button.style.background=btn;
+});
+
+document.querySelectorAll(".theme-buttons button").forEach(button=>{
+button.style.background="";
+});
+
+icons.forEach(icon=>icon.style.color=accent);
+
+labels.forEach(label=>{
+label.style.background=header;
+label.style.boxShadow=`0 6px 15px ${accent}55`;
+});
+
+heading.style.color="#ffffff";
+heading.style.background=header;
+heading.style.boxShadow=`0 6px 15px ${accent}55`;
+devText.style.color=accent;
+
+formBox.style.boxShadow=`0 4px 18px ${accent}55`;
+devBox.style.boxShadow=`0 4px 18px ${accent}55`;
+
+if(theme==="purple"){
+document.body.style.background="linear-gradient(135deg,#f3e5f5,#e1bee7,#ce93d8)";
+}
+
+if(theme==="blue"){
+document.body.style.background="linear-gradient(180deg,#87ceeb,#b0e0e6,#e0f7ff)";
+}
+
+if(theme==="green"){
+document.body.style.background="linear-gradient(135deg,#e8f5e9,#c8e6c9,#a5d6a7)";
+}
+
+if(theme==="red"){
+document.body.style.background="linear-gradient(135deg,#ffebee,#ffcdd2,#ef9a9a)";
+}
+
+if(theme==="gold"){
+document.body.style.background="linear-gradient(135deg,#fff8e1,#ffecb3,#ffe082)";
+}
+
+if(theme==="ocean"){
+document.body.style.background="linear-gradient(180deg,#b3e5fc,#81d4fa,#4fc3f7)";
+}
+
+if(theme==="sunset"){
+document.body.style.background="linear-gradient(180deg,#ffe0b2,#ffab91,#f48fb1)";
+}
+
+if(theme==="black"){
+document.body.style.background="linear-gradient(135deg,#263238,#37474f,#546e7a)";
+}
+
+if(theme==="classicblue"){
+document.body.style.background="linear-gradient(180deg,#d6ecff,#b3d9ff,#87ceeb)";
+}
+
+if(theme==="brown"){
+document.body.style.background="linear-gradient(135deg,#efebe9,#d7ccc8,#bcaaa4)";
+}
+
+if(theme==="violet"){
+document.body.style.background="linear-gradient(135deg,#ede7f6,#d1c4e9,#b39ddb)";
+}
+
+if(theme==="teal"){
+document.body.style.background="linear-gradient(135deg,#e0f2f1,#b2dfdb,#80cbc4)";
+}
+}
+
+window.downloadPDF = function(){
+
+const frontCard=document.querySelectorAll(".id-card")[0];
+const backCard=document.querySelectorAll(".id-card")[1];
+
+const wrapper=document.createElement("div");
+
+wrapper.style.background="#ffffff";
+wrapper.style.padding="20px";
+wrapper.style.display="flex";
+wrapper.style.flexDirection="column";
+wrapper.style.alignItems="center";
+
+const frontClone=frontCard.cloneNode(true);
+const backClone=backCard.cloneNode(true);
+
+frontClone.style.marginBottom="40px";
+frontClone.style.pageBreakAfter="always";
+
+wrapper.appendChild(frontClone);
+wrapper.appendChild(backClone);
+
+html2pdf().set({
+margin:0,
+filename:"Student-ID-Card.pdf",
+image:{type:"jpeg",quality:1},
+html2canvas:{
+scale:4,
+useCORS:true,
+scrollY:0,
+backgroundColor:"#ffffff"
+},
+jsPDF:{
+unit:"mm",
+format:"a4",
+orientation:"portrait"
+}
+}).from(wrapper).save();
+}
+
+window.resetAdjust = function(){
+logoX=0;
+logoY=0;
+logoSize=100;
+headerX=0;
+headerY=0;
+headerSize=100;
+
+document.getElementById("logoBox").style.transform="translate(0px,0px) scale(1)";
+document.querySelector(".header-text").style.transform="translate(0px,0px) scale(1)";
+}
+
+document.getElementById("logoMode").value="transparent";
+
+setTheme(appData.settings.defaultTheme || "purple");
+
+loadDatabase(appData).then(()=>{
+updateLogoMode();
+});
+
+</script>
+
+</body>
+</html>
