@@ -14,6 +14,14 @@ signOut,
 onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
+import {
+ref,
+uploadBytesResumable,
+getDownloadURL,
+deleteObject,
+listAll
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-storage.js";
+
 const collegeSelect = document.getElementById("collegeSelect");
 const adminDropdown = document.getElementById("adminCollegeDropdown");
 
@@ -22,7 +30,23 @@ const activeCollegesEl = document.getElementById("activeColleges");
 const featuredCollegesEl = document.getElementById("featuredColleges");
 const storageUsedEl = document.getElementById("storageUsed");
 
+const modal = document.getElementById("collegeListModal");
+const modalTitle = document.getElementById("modalTitle");
+const modalList = document.getElementById("modalCollegeList");
+
+const previewWrap = document.getElementById("adminPreviewWrap");
+
 let allColleges = {};
+let currentModalType = "all";
+
+let logoX = 0;
+let logoY = 0;
+let logoSize = 100;
+
+let headerX = 0;
+let headerY = 0;
+let headerSize = 100;
+
 let logoutTimer = null;
 
 function resetLogoutTimer(){
@@ -48,17 +72,28 @@ resetLogoutTimer();
 loadColleges();
 });
 
-async function updateAnalytics(){
-const querySnapshot = await getDocs(collection(db,"colleges"));
+async function calculateStorageUsage(){
+try{
+const rootRef = ref(storage,"colleges");
+const result = await listAll(rootRef);
 
+let totalFiles = result.items.length;
+
+storageUsedEl.innerText = totalFiles + " Files";
+}catch{
+storageUsedEl.innerText = "Unavailable";
+}
+}
+
+async function updateAnalytics(){
 let total = 0;
 let active = 0;
 let featured = 0;
 
-querySnapshot.forEach((docSnap)=>{
-total++;
+Object.keys(allColleges).forEach((id)=>{
+const data = allColleges[id];
 
-const data = docSnap.data();
+total++;
 
 if(data.isActive) active++;
 if(data.isFeatured) featured++;
@@ -67,11 +102,11 @@ if(data.isFeatured) featured++;
 totalCollegesEl.innerText = total;
 activeCollegesEl.innerText = active;
 featuredCollegesEl.innerText = featured;
-storageUsedEl.innerText = "Connected";
+
+calculateStorageUsage();
 }
 
 async function loadColleges(){
-adminDropdown.innerHTML = "";
 allColleges = {};
 
 const querySnapshot = await getDocs(collection(db,"colleges"));
@@ -81,6 +116,7 @@ allColleges[docSnap.id] = docSnap.data();
 });
 
 updateAnalytics();
+renderPreview();
 }
 
 window.toggleAdminDropdown = function(){
@@ -99,7 +135,6 @@ adminDropdown.innerHTML = "";
 
 Object.keys(allColleges).forEach((key)=>{
 const college = allColleges[key];
-
 const aliases = college.aliases || [];
 
 const aliasMatch = aliases.some(alias =>
@@ -137,9 +172,62 @@ adminDropdown.style.display="none";
 }
 });
 
+window.showCollegeList = function(type){
+currentModalType = type;
+
+if(type==="all") modalTitle.innerText = "All Colleges";
+if(type==="active") modalTitle.innerText = "Active Colleges";
+if(type==="featured") modalTitle.innerText = "Featured Colleges";
+
+renderModalList();
+modal.style.display = "flex";
+};
+
+window.closeCollegeListModal = function(){
+modal.style.display = "none";
+};
+
+window.filterModalList = function(){
+renderModalList();
+};
+
+function renderModalList(){
+const search = document.getElementById("modalSearch").value.toLowerCase();
+
+modalList.innerHTML = "";
+
+Object.keys(allColleges).forEach((id)=>{
+const data = allColleges[id];
+
+if(currentModalType==="active" && !data.isActive) return;
+if(currentModalType==="featured" && !data.isFeatured) return;
+
+const name = data.collegeNameEn || id;
+
+if(!name.toLowerCase().includes(search)) return;
+
+const item = document.createElement("div");
+item.className = "college-item";
+item.innerText = name;
+
+item.onclick = function(){
+collegeSelect.value = name;
+collegeSelect.dataset.selectedId = id;
+closeCollegeListModal();
+loadCollege();
+};
+
+modalList.appendChild(item);
+});
+}
+
 window.loadCollege = async function(){
 const id = collegeSelect.dataset.selectedId || collegeSelect.value;
-if(!id) return alert("Select college");
+
+if(!id){
+alert("Select college");
+return;
+}
 
 const snap = await getDoc(doc(db,"colleges",id));
 
@@ -158,7 +246,8 @@ document.getElementById("email").value = data.email || "";
 document.getElementById("website").value = data.website || "";
 document.getElementById("address").value = data.address || "";
 document.getElementById("displayOrder").value = data.displayOrder || "";
-document.getElementById("defaultLogoMode").value = data.defaultLogoMode || "transparent";
+document.getElementById("defaultLogoMode").value =
+data.defaultLogoMode || "transparent";
 
 document.getElementById("aliases").value =
 (data.aliases || []).join("\n");
@@ -171,14 +260,124 @@ data.isFeatured === true;
 
 const design = data.design || {};
 
-document.getElementById("logoPosX").value = design.logoPosX || 0;
-document.getElementById("logoPosY").value = design.logoPosY || 0;
-document.getElementById("logoSize").value = design.logoSize || 100;
+logoX = design.logoPosX || 0;
+logoY = design.logoPosY || 0;
+logoSize = design.logoSize || 100;
 
-document.getElementById("headerPosX").value = design.headerPosX || 0;
-document.getElementById("headerPosY").value = design.headerPosY || 0;
-document.getElementById("headerSize").value = design.headerSize || 100;
+headerX = design.headerPosX || 0;
+headerY = design.headerPosY || 0;
+headerSize = design.headerSize || 100;
+
+renderPreview(data);
 };
+
+window.moveDesign = function(direction){
+const target = document.getElementById("adjustTarget").value;
+
+if(target==="logo"){
+if(direction==="up") logoY -= 5;
+if(direction==="down") logoY += 5;
+if(direction==="left") logoX -= 5;
+if(direction==="right") logoX += 5;
+}else{
+if(direction==="up") headerY -= 5;
+if(direction==="down") headerY += 5;
+if(direction==="left") headerX -= 5;
+if(direction==="right") headerX += 5;
+}
+
+renderPreview();
+};
+
+window.resizeDesign = function(action){
+const target = document.getElementById("adjustTarget").value;
+
+if(target==="logo"){
+if(action==="plus") logoSize += 10;
+if(action==="minus" && logoSize > 30) logoSize -= 10;
+}else{
+if(action==="plus") headerSize += 10;
+if(action==="minus" && headerSize > 30) headerSize -= 10;
+}
+
+renderPreview();
+};
+
+window.resetDesign = function(){
+logoX = 0;
+logoY = 0;
+logoSize = 100;
+
+headerX = 0;
+headerY = 0;
+headerSize = 100;
+
+renderPreview();
+};
+
+function renderPreview(data=null){
+const current = data || {};
+
+const logo =
+current.transparentLogo ||
+current.whiteLogo ||
+"";
+
+const signature =
+current.principalSignature ||
+"";
+
+previewWrap.innerHTML = `
+<div style="
+width:340px;
+height:540px;
+background:#f4f4f4;
+border-radius:22px;
+overflow:hidden;
+position:relative;
+box-shadow:0 4px 15px rgba(0,0,0,0.2);
+margin:auto;
+">
+
+<div style="
+background:linear-gradient(135deg,#7b008a,#d100d1);
+height:165px;
+position:relative;
+color:white;
+text-align:center;
+">
+
+<div style="
+position:absolute;
+left:30px;
+top:40px;
+width:60px;
+height:60px;
+transform:translate(${logoX}px,${logoY}px) scale(${logoSize/100});
+">
+<img src="${logo}" style="width:100%;height:100%;object-fit:contain;">
+</div>
+
+<div style="
+position:absolute;
+top:35px;
+left:58px;
+width:275px;
+transform:translate(${headerX}px,${headerY}px) scale(${headerSize/100});
+">
+<h4>${current.collegeNameBn || "College Name"}</h4>
+<p>${current.collegeNameEn || "College English"}</p>
+</div>
+
+</div>
+
+<div style="position:absolute;bottom:20px;right:20px;">
+<img src="${signature}" style="width:80px;">
+</div>
+
+</div>
+`;
+}
 
 window.saveCollege = async function(){
 const id = collegeSelect.dataset.selectedId || collegeSelect.value;
@@ -188,11 +387,9 @@ alert("Select college");
 return;
 }
 
-const aliasesText = document.getElementById("aliases").value;
-
-const aliases = aliasesText
+const aliases = document.getElementById("aliases").value
 .split("\n")
-.map(x => x.trim())
+.map(x=>x.trim())
 .filter(Boolean);
 
 const existingSnap = await getDoc(doc(db,"colleges",id));
@@ -215,12 +412,12 @@ isActive: document.getElementById("isActive").checked,
 isFeatured: document.getElementById("isFeatured").checked,
 
 design:{
-logoPosX:Number(document.getElementById("logoPosX").value || 0),
-logoPosY:Number(document.getElementById("logoPosY").value || 0),
-logoSize:Number(document.getElementById("logoSize").value || 100),
-headerPosX:Number(document.getElementById("headerPosX").value || 0),
-headerPosY:Number(document.getElementById("headerPosY").value || 0),
-headerSize:Number(document.getElementById("headerSize").value || 100)
+logoPosX:logoX,
+logoPosY:logoY,
+logoSize:logoSize,
+headerPosX:headerX,
+headerPosY:headerY,
+headerSize:headerSize
 },
 
 transparentLogo: existingData.transparentLogo || "",
@@ -280,9 +477,7 @@ const id = collegeSelect.dataset.selectedId || collegeSelect.value;
 
 if(!id) return;
 
-const ok = confirm("Delete this college?");
-
-if(!ok) return;
+if(!confirm("Delete this college?")) return;
 
 await deleteDoc(doc(db,"colleges",id));
 
@@ -295,21 +490,10 @@ await signOut(auth);
 window.location.href="login.html";
 };
 
-import {
-ref,
-uploadBytesResumable,
-getDownloadURL,
-deleteObject
-} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-storage.js";
-
 function validateImage(file){
 if(!file) return false;
 
-const allowed = [
-"image/png",
-"image/jpeg",
-"image/webp"
-];
+const allowed = ["image/png","image/jpeg","image/webp"];
 
 if(!allowed.includes(file.type)){
 alert("Only PNG/JPG/WEBP allowed");
@@ -317,7 +501,7 @@ return false;
 }
 
 if(file.size > 5 * 1024 * 1024){
-alert("Max file size 5MB");
+alert("Max 5MB");
 return false;
 }
 
@@ -325,18 +509,14 @@ return true;
 }
 
 function setProgress(progressId, fillId, percent){
-const progress = document.getElementById(progressId);
-const fill = document.getElementById(fillId);
-
-progress.style.display = "block";
-fill.style.width = percent + "%";
+document.getElementById(progressId).style.display = "block";
+document.getElementById(fillId).style.width = percent + "%";
 }
 
 async function uploadCollegeImage(file, folderPath, oldUrl, progressId, fillId){
 if(!validateImage(file)) return null;
 
 const storageRef = ref(storage, folderPath);
-
 const uploadTask = uploadBytesResumable(storageRef, file);
 
 return new Promise((resolve,reject)=>{
@@ -373,9 +553,7 @@ resolve(downloadURL);
 reject(err);
 }
 }
-
 );
-
 });
 }
 
@@ -388,7 +566,7 @@ const id = collegeSelect.dataset.selectedId || collegeSelect.value;
 
 if(!id){
 alert("Select college first");
-input.value="";
+input.value = "";
 return;
 }
 
@@ -404,11 +582,9 @@ return;
 
 const data = snap.data();
 
-const folderPath = `colleges/${id}/${fileName}`;
-
 const url = await uploadCollegeImage(
 file,
-folderPath,
+`colleges/${id}/${fileName}`,
 data[dbField],
 progressId,
 fillId
@@ -418,7 +594,7 @@ if(!url) return;
 
 await setDoc(doc(db,"colleges",id),{
 ...data,
-[dbField]: url
+[dbField]:url
 });
 
 alert("Upload successful");
@@ -430,6 +606,7 @@ document.getElementById(progressId).style.display="none";
 document.getElementById(fillId).style.width="0%";
 },1200);
 
+loadCollege();
 });
 }
 
@@ -469,7 +646,7 @@ window.exportBackup = async function(){
 const querySnapshot = await getDocs(collection(db,"colleges"));
 
 const backup = {
-exportedAt: new Date().toISOString(),
+exportedAt:new Date().toISOString(),
 colleges:{}
 };
 
@@ -498,31 +675,29 @@ document.getElementById("importBackup")
 const file = e.target.files[0];
 if(!file) return;
 
-const ok = confirm("Import backup and overwrite matching colleges?");
+const ok = confirm("Import backup?");
 if(!ok) return;
 
 const text = await file.text();
+
 let json;
 
 try{
 json = JSON.parse(text);
 }catch{
-alert("Invalid JSON backup file");
+alert("Invalid JSON");
 return;
 }
 
 if(!json.colleges){
-alert("Invalid backup file");
+alert("Invalid backup");
 return;
 }
 
 for(const id in json.colleges){
-await setDoc(
-doc(db,"colleges",id),
-json.colleges[id]
-);
+await setDoc(doc(db,"colleges",id),json.colleges[id]);
 }
 
-alert("Backup imported successfully");
+alert("Backup imported");
 loadColleges();
 });

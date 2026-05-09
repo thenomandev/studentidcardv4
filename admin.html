@@ -20,7 +20,7 @@ min-height:100vh;
 }
 
 .container{
-max-width:1200px;
+max-width:1400px;
 margin:auto;
 background:white;
 padding:18px;
@@ -48,6 +48,7 @@ color:white;
 padding:18px;
 border-radius:18px;
 box-shadow:0 10px 25px rgba(37,99,235,0.25);
+cursor:pointer;
 }
 
 .card h3{
@@ -114,35 +115,12 @@ font-size:15px;
 font-weight:700;
 }
 
-.saveBtn{
-background:#16a34a;
-color:white;
-}
-
-.loadBtn{
-background:#2563eb;
-color:white;
-}
-
-.deleteBtn{
-background:#dc2626;
-color:white;
-}
-
-.logoutBtn{
-background:#7c3aed;
-color:white;
-}
-
-.exportBtn{
-background:#0891b2;
-color:white;
-}
-
-.importBtn{
-background:#ea580c;
-color:white;
-}
+.saveBtn{background:#16a34a;color:white;}
+.loadBtn{background:#2563eb;color:white;}
+.deleteBtn{background:#dc2626;color:white;}
+.logoutBtn{background:#7c3aed;color:white;}
+.exportBtn{background:#0891b2;color:white;}
+.importBtn{background:#ea580c;color:white;}
 
 .toggle-row{
 display:grid;
@@ -249,14 +227,89 @@ border-bottom:1px solid #f1f5f9;
 background:#eff6ff;
 }
 
-.position-grid{
+.college-item:last-child{
+border-bottom:none;
+}
+
+.admin-layout{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-gap:12px;
+grid-template-columns:1fr 420px;
+gap:20px;
+align-items:start;
+}
+
+.preview-box{
+background:#f8fafc;
+padding:18px;
+border-radius:18px;
+border:1px solid #d1d5db;
+position:sticky;
+top:15px;
+}
+
+.preview-title{
+font-size:20px;
+font-weight:800;
+margin-bottom:15px;
+text-align:center;
+}
+
+.adjust-controls{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:8px;
+margin-top:12px;
+}
+
+.adjust-controls button{
+background:#6a1b9a;
+color:white;
+font-size:20px;
+padding:12px;
+}
+
+.reset-btn{
+width:100%;
+margin-top:10px;
+background:#dc2626;
+color:white;
+}
+
+.modal{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.55);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:99999;
+}
+
+.modal-content{
+background:white;
+width:min(92%,700px);
+max-height:85vh;
+overflow:auto;
+border-radius:20px;
+padding:20px;
+}
+
+.modal h2{
+margin-bottom:15px;
+}
+
+.list-search{
+margin-bottom:10px;
 }
 
 .hidden{
 display:none;
+}
+
+@media(max-width:1100px){
+.admin-layout{
+grid-template-columns:1fr;
+}
 }
 
 @media(max-width:768px){
@@ -270,6 +323,7 @@ width:100%;
 }
 </style>
 </head>
+
 <body>
 
 <div class="container">
@@ -277,26 +331,30 @@ width:100%;
 <h1>Student ID CMS Admin Panel</h1>
 
 <div class="analytics">
-<div class="card">
+<div class="card" onclick="showCollegeList('all')">
 <h3>Total Colleges</h3>
 <p id="totalColleges">0</p>
 </div>
 
-<div class="card">
+<div class="card" onclick="showCollegeList('active')">
 <h3>Active Colleges</h3>
 <p id="activeColleges">0</p>
 </div>
 
-<div class="card">
+<div class="card" onclick="showCollegeList('featured')">
 <h3>Featured Colleges</h3>
 <p id="featuredColleges">0</p>
 </div>
 
 <div class="card">
 <h3>Storage Used</h3>
-<p id="storageUsed">0 MB</p>
+<p id="storageUsed">Loading...</p>
 </div>
 </div>
+
+<div class="admin-layout">
+
+<div>
 
 <div class="section">
 <h2>College Search</h2>
@@ -334,6 +392,7 @@ oninput="filterAdminCollegeList()"
 <input id="email" placeholder="Email">
 <input id="website" placeholder="Website">
 <input id="displayOrder" type="number" placeholder="Display Order">
+
 <select id="defaultLogoMode">
 <option value="transparent">Transparent Logo</option>
 <option value="box">White Box Logo</option>
@@ -341,7 +400,11 @@ oninput="filterAdminCollegeList()"
 </div>
 
 <textarea id="address" placeholder="Address"></textarea>
-<textarea id="aliases" placeholder="Aliases (one per line)&#10;Govt Barishal College&#10;Barishal College&#10;gbc"></textarea>
+
+<textarea
+id="aliases"
+placeholder="Aliases&#10;Govt Barishal College&#10;Barishal College&#10;gbc"
+></textarea>
 
 <div class="toggle-row">
 <div class="toggle-box">
@@ -393,7 +456,7 @@ Featured College
 </label>
 
 <label class="upload-box">
-<h3>Watermark / Background</h3>
+<h3>Watermark</h3>
 <p>PNG / JPG / WEBP</p>
 <input type="file" id="watermarkFile" accept=".png,.jpg,.jpeg,.webp">
 <div class="progress" id="watermarkProgress">
@@ -405,24 +468,10 @@ Featured College
 </div>
 
 <div class="section">
-<h2>Design Settings</h2>
-
-<div class="position-grid">
-<input id="logoPosX" type="number" placeholder="Logo X">
-<input id="logoPosY" type="number" placeholder="Logo Y">
-<input id="logoSize" type="number" placeholder="Logo Size">
-
-<input id="headerPosX" type="number" placeholder="Header X">
-<input id="headerPosY" type="number" placeholder="Header Y">
-<input id="headerSize" type="number" placeholder="Header Size">
-</div>
-</div>
-
-<div class="section">
-<h2>Add New College</h2>
+<h2>Add / Save College</h2>
 
 <div class="grid">
-<input id="newCollegeId" placeholder="college id (example: govt_barishal_college)">
+<input id="newCollegeId" placeholder="college id">
 <input id="newCollegeName" placeholder="college display name">
 </div>
 
@@ -432,6 +481,59 @@ Featured College
 </div>
 </div>
 
+</div>
+
+<div class="preview-box">
+
+<div class="preview-title">
+Live Design Preview
+</div>
+
+<select id="adjustTarget">
+<option value="logo">Adjust Logo</option>
+<option value="header">Adjust College Header</option>
+</select>
+
+<div class="adjust-controls">
+<button onclick="moveDesign('up')">⬆️</button>
+<button onclick="resizeDesign('plus')">➕</button>
+<button onclick="moveDesign('right')">➡️</button>
+
+<button onclick="moveDesign('left')">⬅️</button>
+<button onclick="resizeDesign('minus')">➖</button>
+<button onclick="moveDesign('down')">⬇️</button>
+</div>
+
+<button class="reset-btn" onclick="resetDesign()">
+Reset Design
+</button>
+
+<div id="adminPreviewWrap"></div>
+
+</div>
+
+</div>
+
+<div class="modal" id="collegeListModal">
+<div class="modal-content">
+
+<h2 id="modalTitle">College List</h2>
+
+<input
+type="text"
+id="modalSearch"
+class="list-search"
+placeholder="Search college..."
+oninput="filterModalList()"
+>
+
+<div id="modalCollegeList"></div>
+
+<div class="button-row">
+<button class="deleteBtn" onclick="closeCollegeListModal()">Close</button>
+</div>
+
+</div>
 </div>
 
 <script type="module" src="admin.js"></script>
