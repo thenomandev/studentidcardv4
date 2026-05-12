@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin CMS</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#f5f5f5;
+padding:20px;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+background:white;
+padding:20px;
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.1);
+}
+
+h1{
+text-align:center;
+margin-bottom:20px;
+}
+
+input, textarea, select{
+width:100%;
+padding:12px;
+margin:10px 0;
+border:1px solid #ccc;
+border-radius:10px;
+box-sizing:border-box;
+}
+
+button{
+padding:12px 18px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+margin:5px;
+font-size:15px;
+}
+
+.saveBtn{
+background:#28a745;
+color:white;
+}
+
+.logoutBtn{
+background:#dc3545;
+color:white;
+}
+
+.loadBtn{
+background:#007bff;
+color:white;
+}
+
+.deleteBtn{
+background:#ff5722;
+color:white;
+}
+.college-dropdown-box{
+position:relative;
+}
+
+.college-dropdown{
+position:absolute;
+top:100%;
+left:0;
+width:100%;
+background:white;
+border:1px solid #ccc;
+border-radius:12px;
+max-height:250px;
+overflow-y:auto;
+z-index:9999;
+box-shadow:0 8px 20px rgba(0,0,0,0.15);
+display:none;
+}
+
+.college-item{
+padding:12px 15px;
+cursor:pointer;
+font-size:14px;
+border-bottom:1px solid #eee;
+}
+
+.college-item:hover{
+background:#e3f2fd;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="container">
+<h1>Student ID CMS Admin</h1>
+
+<div class="college-dropdown-box">
+
+<input
+type="text"
+id="collegeSelect"
+placeholder="Select College"
+autocomplete="off"
+onclick="toggleAdminDropdown()"
+oninput="filterAdminCollegeList()"
+>
+
+<div id="adminCollegeDropdown" class="college-dropdown"></div>
+
+</div>
+
+<button class="loadBtn" onclick="loadCollege()">Load College</button>
+<button class="deleteBtn" onclick="deleteCollege()">Delete College</button>
+<button class="logoutBtn" onclick="logout()">Logout</button>
+
+<h3>College Details</h3>
+
+<input id="collegeNameBn" placeholder="College Name Bangla">
+<input id="collegeNameEn" placeholder="College Name English">
+<input id="established" placeholder="Established">
+<input id="transparentLogo" placeholder="Transparent Logo URL">
+<input id="whiteLogo" placeholder="White Box Logo URL">
+<input id="principalSignature" placeholder="Principal Signature URL">
+<input id="website" placeholder="Website">
+<input id="email" placeholder="Email">
+<input id="phone" placeholder="Phone">
+<textarea id="address" placeholder="Address"></textarea>
+
+<button class="saveBtn" onclick="saveCollege()">Save Changes</button>
+
+<h3>Add New College</h3>
+
+<input id="newCollegeId" placeholder="college id (example: govt_college)">
+<input id="newCollegeName" placeholder="college display name">
+
+<button class="saveBtn" onclick="addCollege()">Add College</button>
+
+</div>
+
+<script type="module" src="admin.js"></script>
+
+</body>
+</html>
