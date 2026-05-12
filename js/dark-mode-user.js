@@ -43,19 +43,9 @@ body,
 .college-dropdown,
 .college-item,
 #darkModeToggle,
-.id-card,
-.notice,
-.back-row,
-.student-name,
-.college h2,
-.college p,
-.footer,
 .logo-controls button,
 .reset-btn,
 .btn,
-.front-header,
-.top-wave,
-.front-bottom-design,
 .theme-buttons button,
 .input-box i{
 transition:all 0.35s ease;
@@ -71,7 +61,6 @@ const style = document.createElement("style");
 style.innerHTML = `
 body.dark-mode{
 background:linear-gradient(135deg,#0d1117,#161b22,#21262d) !important;
-color:#ffffff !important;
 }
 
 body.dark-mode .form-box{
@@ -121,24 +110,13 @@ body.dark-mode .college-item:hover{
 background:#21262d !important;
 }
 
-body.dark-mode .student-name{
-color:#ffffff !important;
-}
-
 body.dark-mode .developer-text{
 color:#58a6ff !important;
 }
 
-body.dark-mode .notice,
-body.dark-mode .back-row,
-body.dark-mode .college h2,
-body.dark-mode .college p{
-color:#111111 !important;
-}
-
-body.dark-mode .btn,
 body.dark-mode .logo-controls button,
-body.dark-mode .reset-btn{
+body.dark-mode .reset-btn,
+body.dark-mode button.btn{
 background:#238636 !important;
 }
 
@@ -250,6 +228,13 @@ devTextColor: document.querySelector(".developer-text")?.style.color || ""
 }
 
 function restoreThemeState(){
+
+const lastTheme = localStorage.getItem("student_id_last_theme");
+
+if(lastTheme && typeof window.setTheme === "function"){
+window.setTheme(lastTheme);
+return;
+}
 if(!savedThemeState) return;
 
 document.body.style.background = savedThemeState.bodyBg;
