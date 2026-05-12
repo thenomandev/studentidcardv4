@@ -10,6 +10,10 @@
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;700;900&display=swap" rel="stylesheet">
+
 <link rel="stylesheet" href="css/main.css">
 
 </head>
@@ -527,10 +531,8 @@ logoBox.classList.remove("transparent");
 logoBox.classList.add("transparent");
 }
 
-let collegeKey = preset || "barishal";
-
-if(appData.colleges && appData.colleges[collegeKey]){
-let college = appData.colleges[collegeKey];
+if(preset && appData.colleges[preset]){
+let college = appData.colleges[preset];
 
 document.getElementById("collegeLogo").src =
 logoMode==="transparent"
