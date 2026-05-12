@@ -3,197 +3,67 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Student ID CMS Admin</title>
+<title>Admin CMS</title>
 
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
-
 body{
-background:linear-gradient(135deg,#eef2ff,#dbeafe,#e0f2fe);
-padding:16px;
-min-height:100vh;
+margin:0;
+font-family:Arial,sans-serif;
+background:#f5f5f5;
+padding:20px;
 }
 
 .container{
-max-width:1450px;
+max-width:900px;
 margin:auto;
 background:white;
 padding:20px;
-border-radius:24px;
-box-shadow:0 15px 40px rgba(0,0,0,0.12);
+border-radius:20px;
+box-shadow:0 10px 30px rgba(0,0,0,0.1);
 }
 
 h1{
 text-align:center;
 margin-bottom:20px;
-font-size:30px;
-color:#111827;
 }
 
-.analytics{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-gap:14px;
-margin-bottom:20px;
-}
-
-.card{
-background:linear-gradient(135deg,#2563eb,#1d4ed8);
-color:white;
-padding:18px;
-border-radius:18px;
-cursor:pointer;
-box-shadow:0 10px 25px rgba(37,99,235,0.25);
-}
-
-.card h3{
-font-size:14px;
-margin-bottom:8px;
-}
-
-.card p{
-font-size:28px;
-font-weight:900;
-}
-
-.admin-layout{
-display:grid;
-grid-template-columns:1fr 420px;
-gap:20px;
-align-items:start;
-}
-
-.section{
-background:#f8fafc;
-padding:18px;
-border-radius:18px;
-margin-bottom:20px;
-border:1px solid #e5e7eb;
-}
-
-.section h2{
-margin-bottom:14px;
-font-size:20px;
-color:#111827;
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:14px;
-}
-
-input,
-textarea,
-select{
+input, textarea, select{
 width:100%;
-padding:14px;
-margin:8px 0;
-border:1px solid #d1d5db;
-border-radius:12px;
-font-size:15px;
-background:white;
-}
-
-textarea{
-min-height:100px;
-resize:vertical;
-}
-
-.button-row{
-display:flex;
-flex-wrap:wrap;
-gap:10px;
-margin-top:10px;
+padding:12px;
+margin:10px 0;
+border:1px solid #ccc;
+border-radius:10px;
+box-sizing:border-box;
 }
 
 button{
-padding:14px 18px;
+padding:12px 18px;
 border:none;
-border-radius:12px;
+border-radius:10px;
 cursor:pointer;
+margin:5px;
 font-size:15px;
-font-weight:700;
 }
 
-.saveBtn{background:#16a34a;color:white;}
-.loadBtn{background:#2563eb;color:white;}
-.deleteBtn{background:#dc2626;color:white;}
-.logoutBtn{background:#7c3aed;color:white;}
-.exportBtn{background:#0891b2;color:white;}
-.importBtn{background:#ea580c;color:white;}
-
-.toggle-row{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-gap:12px;
-margin-top:10px;
+.saveBtn{
+background:#28a745;
+color:white;
 }
 
-.toggle-box{
-background:white;
-padding:14px;
-border-radius:14px;
-border:1px solid #d1d5db;
+.logoutBtn{
+background:#dc3545;
+color:white;
 }
 
-.toggle-box label{
-display:flex;
-align-items:center;
-gap:10px;
-font-weight:700;
+.loadBtn{
+background:#007bff;
+color:white;
 }
 
-.toggle-box input[type="checkbox"]{
-width:20px;
-height:20px;
-margin:0;
+.deleteBtn{
+background:#ff5722;
+color:white;
 }
-
-.upload-grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:14px;
-}
-
-.upload-box{
-background:white;
-border:2px dashed #93c5fd;
-padding:18px;
-border-radius:18px;
-text-align:center;
-cursor:pointer;
-transition:0.3s;
-}
-
-.upload-box:hover{
-background:#eff6ff;
-}
-
-.upload-box input{
-display:none;
-}
-
-.progress{
-height:10px;
-background:#e5e7eb;
-border-radius:999px;
-overflow:hidden;
-margin-top:10px;
-display:none;
-}
-
-.progress-fill{
-height:100%;
-width:0%;
-background:#2563eb;
-}
-
 .college-dropdown-box{
 position:relative;
 }
@@ -204,482 +74,75 @@ top:100%;
 left:0;
 width:100%;
 background:white;
-border:1px solid #d1d5db;
-border-radius:14px;
+border:1px solid #ccc;
+border-radius:12px;
 max-height:250px;
 overflow-y:auto;
 z-index:9999;
+box-shadow:0 8px 20px rgba(0,0,0,0.15);
 display:none;
-box-shadow:0 12px 25px rgba(0,0,0,0.12);
 }
 
 .college-item{
-padding:14px;
+padding:12px 15px;
 cursor:pointer;
-border-bottom:1px solid #f1f5f9;
+font-size:14px;
+border-bottom:1px solid #eee;
 }
 
 .college-item:hover{
-background:#eff6ff;
-}
-
-.preview-box{
-background:#f8fafc;
-padding:18px;
-border-radius:18px;
-border:1px solid #d1d5db;
-position:sticky;
-top:15px;
-overflow-x:auto;
-}
-
-.preview-title{
-font-size:20px;
-font-weight:800;
-margin-bottom:15px;
-text-align:center;
-}
-
-.adjust-controls{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:8px;
-margin-top:12px;
-}
-
-.adjust-controls button{
-background:#6a1b9a;
-color:white;
-font-size:20px;
-padding:12px;
-}
-
-.reset-btn{
-width:100%;
-margin-top:10px;
-background:#dc2626;
-color:white;
-}
-
-.hidden{
-display:none;
-}
-
-#adminPreviewWrap{
-display:flex;
-justify-content:center;
-padding-top:15px;
-min-width:340px;
-}
-
-.id-card{
-width:340px;
-height:540px;
-background:#f4f4f4;
-border-radius:22px;
-overflow:hidden;
-position:relative;
-box-shadow:0 4px 15px rgba(0,0,0,0.2);
-}
-
-.front-header{
-background:linear-gradient(135deg,#7b008a,#d100d1);
-height:165px;
-color:white;
-text-align:center;
-position:relative;
-padding-top:20px;
-}
-
-.front-header::after{
-content:"";
-position:absolute;
-left:0;
-bottom:-1px;
-width:100%;
-height:58px;
-background:#f4f4f4;
-border-radius:50% 50% 0 0;
-}
-
-.logo{
-position:absolute;
-left:30px;
-top:40px;
-background:white;
-padding:8px;
-border-radius:8px;
-display:flex;
-align-items:center;
-justify-content:center;
-width:35px;
-height:35px;
-z-index:5;
-}
-
-.logo img{
-width:140%;
-height:140%;
-object-fit:contain;
-}
-
-.logo.transparent{
-left:25px;
-top:20px;
-background:transparent;
-padding:0;
-width:60px;
-height:60px;
-border-radius:0;
-}
-
-.logo.transparent img{
-width:100%;
-height:100%;
-}
-
-.header-text{
-position:absolute;
-top:35px;
-left:58px;
-width:275px;
-overflow:visible;
-}
-
-.header-text h1{
-margin:0;
-font-size:13px;
-line-height:1.15;
-white-space:nowrap;
-}
-
-.header-text p{
-margin:1px 0;
-font-size:11px;
-white-space:nowrap;
-}
-
-.estd{
-margin-left:-40px !important;
-font-size:12px !important;
-}
-
-.dept{
-margin-top:70px;
-font-size:22px;
-font-weight:bold;
-color:#ffd500;
-}
-
-.photo-box{
-text-align:center;
-margin-top:-45px;
-position:relative;
-z-index:5;
-}
-
-.student-name{
-text-align:center;
-color:#000080;
-font-size:26px;
-font-weight:bold;
-margin-top:1px;
-}
-
-.info{
-padding:20px;
-}
-
-.info-row{
-display:flex;
-gap:4px;
-margin-bottom:8px;
-font-size:17px;
-}
-
-.label{
-width:110px;
-font-weight:bold;
-}
-
-.signature{
-position:absolute;
-right:18px;
-bottom:20px;
-text-align:center;
-}
-
-.signature img{
-width:78px;
-}
-
-.signature p{
-margin:0;
-margin-top:-10px;
-font-size:13px;
-}
-
-.front-bottom-design{
-position:absolute;
-bottom:0;
-width:100%;
-background:linear-gradient(135deg,#7b008a,#d100d1);
-padding:10px 0;
-}
-
-.modal{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,0.55);
-display:none;
-justify-content:center;
-align-items:center;
-z-index:99999;
-}
-
-.modal-content{
-background:white;
-width:min(92%,700px);
-max-height:85vh;
-overflow:auto;
-border-radius:20px;
-padding:20px;
-}
-
-.list-search{
-margin-bottom:10px;
-}
-
-@media(max-width:1100px){
-.admin-layout{
-grid-template-columns:1fr;
-}
-}
-
-@media(max-width:768px){
-h1{
-font-size:24px;
-}
-
-button{
-width:100%;
-}
+background:#e3f2fd;
 }
 
 </style>
-</head>
 
+</head>
 <body>
 
 <div class="container">
-
-<h1>Student ID CMS Admin Panel</h1>
-
-<div class="analytics">
-<div class="card" onclick="showCollegeList('all')">
-<h3>Total Colleges</h3>
-<p id="totalColleges">0</p>
-</div>
-
-<div class="card" onclick="showCollegeList('active')">
-<h3>Active Colleges</h3>
-<p id="activeColleges">0</p>
-</div>
-
-<div class="card" onclick="showCollegeList('featured')">
-<h3>Featured Colleges</h3>
-<p id="featuredColleges">0</p>
-</div>
-
-<div class="card">
-<h3>Storage Used</h3>
-<p id="storageUsed">Connected</p>
-</div>
-</div>
-
-<div class="admin-layout">
-
-<div>
-
-<div class="section">
-<h2>College Search</h2>
+<h1>Student ID CMS Admin</h1>
 
 <div class="college-dropdown-box">
+
 <input
 type="text"
 id="collegeSelect"
-placeholder="Search / Select College"
+placeholder="Select College"
 autocomplete="off"
 onclick="toggleAdminDropdown()"
 oninput="filterAdminCollegeList()"
 >
+
 <div id="adminCollegeDropdown" class="college-dropdown"></div>
+
 </div>
 
-<div class="button-row">
 <button class="loadBtn" onclick="loadCollege()">Load College</button>
 <button class="deleteBtn" onclick="deleteCollege()">Delete College</button>
 <button class="logoutBtn" onclick="logout()">Logout</button>
-<button class="exportBtn" onclick="exportBackup()">Export Backup</button>
-<button class="importBtn" onclick="document.getElementById('importBackup').click()">Import Backup</button>
-<input type="file" id="importBackup" class="hidden" accept=".json">
-</div>
-</div>
 
-<div class="section">
-<h2>College Information</h2>
+<h3>College Details</h3>
 
-<div class="grid">
 <input id="collegeNameBn" placeholder="College Name Bangla">
 <input id="collegeNameEn" placeholder="College Name English">
 <input id="established" placeholder="Established">
-<input id="phone" placeholder="Phone">
-<input id="email" placeholder="Email">
+<input id="transparentLogo" placeholder="Transparent Logo URL">
+<input id="whiteLogo" placeholder="White Box Logo URL">
+<input id="principalSignature" placeholder="Principal Signature URL">
 <input id="website" placeholder="Website">
-<input id="displayOrder" type="number" placeholder="Display Order">
-
-<select id="defaultLogoMode">
-<option value="transparent">Transparent Logo</option>
-<option value="box">White Box Logo</option>
-</select>
-
-</div>
-
+<input id="email" placeholder="Email">
+<input id="phone" placeholder="Phone">
 <textarea id="address" placeholder="Address"></textarea>
 
-<textarea
-id="aliases"
-placeholder="Aliases&#10;Govt Barishal College&#10;Barishal College&#10;gbc"
-></textarea>
-
-<div class="toggle-row">
-<div class="toggle-box">
-<label>
-<input type="checkbox" id="isActive" checked>
-Active College
-</label>
-</div>
-
-<div class="toggle-box">
-<label>
-<input type="checkbox" id="isFeatured">
-Featured College
-</label>
-</div>
-</div>
-</div>
-
-<div class="section">
-<h2>Image Uploads</h2>
-
-<div class="upload-grid">
-
-<label class="upload-box">
-<h3>Transparent Logo</h3>
-<p>PNG / JPG / WEBP</p>
-<input type="file" id="transparentLogoFile" accept=".png,.jpg,.jpeg,.webp">
-<div class="progress" id="transparentProgress">
-<div class="progress-fill" id="transparentProgressFill"></div>
-</div>
-</label>
-
-<label class="upload-box">
-<h3>White Box Logo</h3>
-<p>PNG / JPG / WEBP</p>
-<input type="file" id="whiteLogoFile" accept=".png,.jpg,.jpeg,.webp">
-<div class="progress" id="whiteProgress">
-<div class="progress-fill" id="whiteProgressFill"></div>
-</div>
-</label>
-
-<label class="upload-box">
-<h3>Principal Signature</h3>
-<p>PNG / JPG / WEBP</p>
-<input type="file" id="signatureFile" accept=".png,.jpg,.jpeg,.webp">
-<div class="progress" id="signatureProgress">
-<div class="progress-fill" id="signatureProgressFill"></div>
-</div>
-</label>
-
-<label class="upload-box">
-<h3>Watermark</h3>
-<p>PNG / JPG / WEBP</p>
-<input type="file" id="watermarkFile" accept=".png,.jpg,.jpeg,.webp">
-<div class="progress" id="watermarkProgress">
-<div class="progress-fill" id="watermarkProgressFill"></div>
-</div>
-</label>
-
-</div>
-</div>
-
-<div class="section">
-<h2>Add / Save College</h2>
-
-<div class="grid">
-<input id="newCollegeId" placeholder="college id">
-<input id="newCollegeName" placeholder="college display name">
-</div>
-
-<div class="button-row">
-<button class="saveBtn" onclick="addCollege()">Add College</button>
 <button class="saveBtn" onclick="saveCollege()">Save Changes</button>
-</div>
-</div>
 
-</div>
+<h3>Add New College</h3>
 
-<div class="preview-box">
+<input id="newCollegeId" placeholder="college id (example: govt_college)">
+<input id="newCollegeName" placeholder="college display name">
 
-<div class="preview-title">
-Live Design Preview
-</div>
+<button class="saveBtn" onclick="addCollege()">Add College</button>
 
-<select id="adjustTarget">
-<option value="logo">Adjust Logo</option>
-<option value="header">Adjust College Header</option>
-</select>
-
-<div class="adjust-controls">
-<button onclick="moveDesign('up')">⬆️</button>
-<button onclick="resizeDesign('plus')">➕</button>
-<button onclick="moveDesign('right')">➡️</button>
-
-<button onclick="moveDesign('left')">⬅️</button>
-<button onclick="resizeDesign('minus')">➖</button>
-<button onclick="moveDesign('down')">⬇️</button>
-</div>
-
-<button class="reset-btn" onclick="resetDesign()">
-Reset Design
-</button>
-
-<div id="adminPreviewWrap"></div>
-
-</div>
-
-</div>
-
-<div class="modal" id="collegeListModal">
-<div class="modal-content">
-
-<h2 id="modalTitle">College List</h2>
-
-<input
-type="text"
-id="modalSearch"
-class="list-search"
-placeholder="Search college..."
-oninput="filterModalList()"
->
-
-<div id="modalCollegeList"></div>
-
-<div class="button-row">
-<button class="deleteBtn" onclick="closeCollegeListModal()">Close</button>
-</div>
-
-</div>
 </div>
 
 <script type="module" src="admin.js"></script>

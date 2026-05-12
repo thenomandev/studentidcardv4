@@ -1,5 +1,4 @@
-import { db, auth, storage } from "./firebase-config.js";
-
+import { db, auth } from "./firebase-config.js";
 import {
 collection,
 getDocs,
@@ -14,430 +13,90 @@ signOut,
 onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
-import {
-ref,
-uploadBytesResumable,
-getDownloadURL
-} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-storage.js";
-
 const collegeSelect = document.getElementById("collegeSelect");
 const adminDropdown = document.getElementById("adminCollegeDropdown");
-const previewWrap = document.getElementById("adminPreviewWrap");
-
-const totalCollegesEl = document.getElementById("totalColleges");
-const activeCollegesEl = document.getElementById("activeColleges");
-const featuredCollegesEl = document.getElementById("featuredColleges");
-
-const modal = document.getElementById("collegeListModal");
-const modalTitle = document.getElementById("modalTitle");
-const modalList = document.getElementById("modalCollegeList");
-
-let allColleges = {};
-let currentModalType = "all";
-
-let logoX = 0;
-let logoY = 0;
-let logoSize = 100;
-
-let headerX = 0;
-let headerY = 0;
-let headerSize = 100;
-
-let currentCollegeData = null;
 
 onAuthStateChanged(auth,(user)=>{
 if(!user){
 window.location.href="login.html";
-return;
-}
+}else{
 loadColleges();
+}
 });
 
+let allColleges = {};
+
 async function loadColleges(){
-allColleges = {};
+adminDropdown.innerHTML="";
+allColleges={};
 
 const querySnapshot = await getDocs(collection(db,"colleges"));
 
 querySnapshot.forEach((docSnap)=>{
-allColleges[docSnap.id] = docSnap.data();
-});
-
-updateAnalytics();
-renderPreview();
-}
-
-function updateAnalytics(){
-let total = 0;
-let active = 0;
-let featured = 0;
-
-Object.keys(allColleges).forEach((id)=>{
-const data = allColleges[id];
-total++;
-
-if(data.isActive) active++;
-if(data.isFeatured) featured++;
-});
-
-totalCollegesEl.innerText = total;
-activeCollegesEl.innerText = active;
-featuredCollegesEl.innerText = featured;
-}
-
-window.toggleAdminDropdown = function(){
-if(adminDropdown.style.display==="block"){
-adminDropdown.style.display="none";
-}else{
-filterAdminCollegeList();
-adminDropdown.style.display="block";
-}
-};
-
-window.filterAdminCollegeList = function(){
-const input = collegeSelect.value.toLowerCase();
-
-adminDropdown.innerHTML = "";
-
-Object.keys(allColleges).forEach((key)=>{
-const college = allColleges[key];
-const aliases = college.aliases || [];
-
-const aliasMatch = aliases.some(alias =>
-alias.toLowerCase().includes(input)
-);
-
-const match =
-key.toLowerCase().includes(input) ||
-(college.collegeNameEn || "").toLowerCase().includes(input) ||
-(college.collegeNameBn || "").toLowerCase().includes(input) ||
-aliasMatch;
-
-if(match){
-const item = document.createElement("div");
-item.className = "college-item";
-item.innerText = college.collegeNameEn || key;
-
-item.onclick = function(){
-collegeSelect.value = college.collegeNameEn || key;
-collegeSelect.dataset.selectedId = key;
-adminDropdown.style.display = "none";
-};
-
-adminDropdown.appendChild(item);
-}
-});
-};
-
-document.addEventListener("click",function(e){
-if(
-!collegeSelect.contains(e.target) &&
-!adminDropdown.contains(e.target)
-){
-adminDropdown.style.display="none";
-}
-});
-
-window.showCollegeList = function(type){
-currentModalType = type;
-
-if(type==="all") modalTitle.innerText = "All Colleges";
-if(type==="active") modalTitle.innerText = "Active Colleges";
-if(type==="featured") modalTitle.innerText = "Featured Colleges";
-
-renderModalList();
-modal.style.display = "flex";
-};
-
-window.closeCollegeListModal = function(){
-modal.style.display = "none";
-};
-
-window.filterModalList = function(){
-renderModalList();
-};
-
-function renderModalList(){
-const search = document.getElementById("modalSearch").value.toLowerCase();
-
-modalList.innerHTML = "";
-
-Object.keys(allColleges).forEach((id)=>{
-const data = allColleges[id];
-
-if(currentModalType==="active" && !data.isActive) return;
-if(currentModalType==="featured" && !data.isFeatured) return;
-
-const name = data.collegeNameEn || id;
-
-if(!name.toLowerCase().includes(search)) return;
-
-const item = document.createElement("div");
-item.className = "college-item";
-item.innerText = name;
-
-item.onclick = function(){
-collegeSelect.value = name;
-collegeSelect.dataset.selectedId = id;
-closeCollegeListModal();
-loadCollege();
-};
-
-modalList.appendChild(item);
+allColleges[docSnap.id]=docSnap.data();
 });
 }
 
 window.loadCollege = async function(){
-const id = collegeSelect.dataset.selectedId;
+const id=collegeSelect.dataset.selectedId || collegeSelect.value;
+if(!id) return;
 
-if(!id){
-alert("Select college");
-return;
-}
+const docRef=doc(db,"colleges",id);
+const snap=await getDoc(docRef);
 
-const snap = await getDoc(doc(db,"colleges",id));
+if(!snap.exists()) return;
 
-if(!snap.exists()){
-alert("College not found");
-return;
-}
+const data=snap.data();
 
-const data = snap.data();
-currentCollegeData = data;
-
-document.getElementById("collegeNameBn").value = data.collegeNameBn || "";
-document.getElementById("collegeNameEn").value = data.collegeNameEn || "";
-document.getElementById("established").value = data.established || "";
-document.getElementById("phone").value = data.phone || "";
-document.getElementById("email").value = data.email || "";
-document.getElementById("website").value = data.website || "";
-document.getElementById("address").value = data.address || "";
-document.getElementById("displayOrder").value = data.displayOrder || "";
-document.getElementById("defaultLogoMode").value = data.defaultLogoMode || "transparent";
-
-document.getElementById("aliases").value =
-(data.aliases || []).join("\n");
-
-document.getElementById("isActive").checked = data.isActive !== false;
-document.getElementById("isFeatured").checked = data.isFeatured === true;
-
-const design = data.design || {};
-
-logoX = design.logoPosX || 0;
-logoY = design.logoPosY || 0;
-logoSize = design.logoSize || 100;
-
-headerX = design.headerPosX || 0;
-headerY = design.headerPosY || 0;
-headerSize = design.headerSize || 100;
-
-renderPreview(data);
+document.getElementById("collegeNameBn").value=data.collegeNameBn || "";
+document.getElementById("collegeNameEn").value=data.collegeNameEn || "";
+document.getElementById("established").value=data.established || "";
+document.getElementById("transparentLogo").value=data.transparentLogo || "";
+document.getElementById("whiteLogo").value=data.whiteLogo || "";
+document.getElementById("principalSignature").value=data.principalSignature || "";
+document.getElementById("website").value=data.website || "";
+document.getElementById("email").value=data.email || "";
+document.getElementById("phone").value=data.phone || "";
+document.getElementById("address").value=data.address || "";
 };
-
-window.moveDesign = function(direction){
-const target = document.getElementById("adjustTarget").value;
-
-if(target==="logo"){
-if(direction==="up") logoY -= 5;
-if(direction==="down") logoY += 5;
-if(direction==="left") logoX -= 5;
-if(direction==="right") logoX += 5;
-}else{
-if(direction==="up") headerY -= 5;
-if(direction==="down") headerY += 5;
-if(direction==="left") headerX -= 5;
-if(direction==="right") headerX += 5;
-}
-
-renderPreview(currentCollegeData);
-};
-
-window.resizeDesign = function(action){
-const target = document.getElementById("adjustTarget").value;
-
-if(target==="logo"){
-if(action==="plus") logoSize += 10;
-if(action==="minus" && logoSize > 30) logoSize -= 10;
-}else{
-if(action==="plus") headerSize += 10;
-if(action==="minus" && headerSize > 30) headerSize -= 10;
-}
-
-renderPreview(currentCollegeData);
-};
-
-window.resetDesign = function(){
-logoX = 0;
-logoY = 0;
-logoSize = 100;
-
-headerX = 0;
-headerY = 0;
-headerSize = 100;
-
-renderPreview(currentCollegeData);
-};
-
-function renderPreview(data=null){
-const current = data || {};
-
-const logoMode =
-document.getElementById("defaultLogoMode")?.value ||
-current.defaultLogoMode ||
-"transparent";
-
-const logo =
-logoMode==="transparent"
-? (current.transparentLogo || "")
-: (current.whiteLogo || "");
-
-const signature = current.principalSignature || "";
-const watermark = current.watermark || "";
-
-previewWrap.innerHTML = `
-<div class="id-card">
-
-${watermark ? `
-<img
-src="${watermark}"
-style="
-position:absolute;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-max-width:75%;
-max-height:75%;
-opacity:0.08;
-z-index:1;
-"
->
-` : ""}
-
-<div class="front-header">
-
-<div class="logo ${logoMode==="transparent" ? "transparent" : ""}"
-style="transform:translate(${logoX}px,${logoY}px) scale(${logoSize/100});">
-<img src="${logo}">
-</div>
-
-<div class="header-text"
-style="transform:translate(${headerX}px,${headerY}px) scale(${headerSize/100});">
-<h1>${current.collegeNameBn || "College Name"}</h1>
-<p>${current.collegeNameEn || "College English"}</p>
-<p class="estd">স্থাপিত: ${current.established || "2025"} খ্রি.</p>
-</div>
-
-<div class="dept">ব্যবস্থাপনা বিভাগ</div>
-
-</div>
-
-<div class="photo-box">
-<div style="
-width:115px;
-height:140px;
-border:3px solid red;
-border-radius:8px;
-background:white;
-margin:auto;
-"></div>
-</div>
-
-<div class="student-name">Student Name</div>
-
-<div class="info">
-<div class="info-row"><div class="label">শ্রেণি</div><div>:</div><div>Demo</div></div>
-<div class="info-row"><div class="label">রোল</div><div>:</div><div>Demo</div></div>
-<div class="info-row"><div class="label">সেশন</div><div>:</div><div>Demo</div></div>
-</div>
-
-<div class="signature">
-<img src="${signature}">
-<p>অধ্যক্ষ</p>
-</div>
-
-<div class="front-bottom-design"></div>
-
-</div>
-`;
-}
 
 window.saveCollege = async function(){
-const id = collegeSelect.dataset.selectedId;
-
-if(!id){
-alert("Select college");
-return;
-}
-
-const existingSnap = await getDoc(doc(db,"colleges",id));
-const existingData = existingSnap.exists() ? existingSnap.data() : {};
+const id=collegeSelect.dataset.selectedId || collegeSelect.value;
+if(!id) return alert("Select college");
 
 await setDoc(doc(db,"colleges",id),{
-collegeNameBn: document.getElementById("collegeNameBn").value,
-collegeNameEn: document.getElementById("collegeNameEn").value,
-established: document.getElementById("established").value,
-phone: document.getElementById("phone").value,
-email: document.getElementById("email").value,
-website: document.getElementById("website").value,
-address: document.getElementById("address").value,
-displayOrder: Number(document.getElementById("displayOrder").value || 9999),
-defaultLogoMode: document.getElementById("defaultLogoMode").value,
-aliases: document.getElementById("aliases").value.split("\n").map(x=>x.trim()).filter(Boolean),
-isActive: document.getElementById("isActive").checked,
-isFeatured: document.getElementById("isFeatured").checked,
-
-design:{
-logoPosX:logoX,
-logoPosY:logoY,
-logoSize:logoSize,
-headerPosX:headerX,
-headerPosY:headerY,
-headerSize:headerSize
-},
-
-transparentLogo: existingData.transparentLogo || "",
-whiteLogo: existingData.whiteLogo || "",
-principalSignature: existingData.principalSignature || "",
-watermark: existingData.watermark || ""
+collegeNameBn:document.getElementById("collegeNameBn").value,
+collegeNameEn:document.getElementById("collegeNameEn").value,
+established:document.getElementById("established").value,
+transparentLogo:document.getElementById("transparentLogo").value,
+whiteLogo:document.getElementById("whiteLogo").value,
+principalSignature:document.getElementById("principalSignature").value,
+website:document.getElementById("website").value,
+email:document.getElementById("email").value,
+phone:document.getElementById("phone").value,
+address:document.getElementById("address").value
 });
 
-alert("Saved");
-loadColleges();
+alert("Saved successfully");
 };
 
 window.addCollege = async function(){
-const id = document.getElementById("newCollegeId").value.trim();
-const name = document.getElementById("newCollegeName").value.trim();
+const id=document.getElementById("newCollegeId").value.trim();
+const name=document.getElementById("newCollegeName").value.trim();
 
-if(!id || !name){
-alert("Fill fields");
-return;
-}
+if(!id || !name) return alert("Fill fields");
 
 await setDoc(doc(db,"colleges",id),{
-collegeNameBn:name,
 collegeNameEn:name,
+collegeNameBn:name,
 established:"",
-phone:"",
-email:"",
-website:"",
-address:"",
-displayOrder:9999,
-defaultLogoMode:"transparent",
-aliases:[],
-isActive:true,
-isFeatured:false,
-design:{
-logoPosX:0,
-logoPosY:0,
-logoSize:100,
-headerPosX:0,
-headerPosY:0,
-headerSize:100
-},
 transparentLogo:"",
 whiteLogo:"",
 principalSignature:"",
-watermark:""
+website:"",
+email:"",
+phone:"",
+address:""
 });
 
 alert("College added");
@@ -445,11 +104,8 @@ loadColleges();
 };
 
 window.deleteCollege = async function(){
-const id = collegeSelect.dataset.selectedId;
-
+const id=collegeSelect.dataset.selectedId || collegeSelect.value;
 if(!id) return;
-
-if(!confirm("Delete college?")) return;
 
 await deleteDoc(doc(db,"colleges",id));
 
@@ -462,142 +118,40 @@ await signOut(auth);
 window.location.href="login.html";
 };
 
-function validateImage(file){
-if(!file) return false;
-
-const allowed = ["image/png","image/jpeg","image/webp"];
-
-if(!allowed.includes(file.type)){
-alert("Only PNG/JPG/WEBP");
-return false;
+window.toggleAdminDropdown = function(){
+if(adminDropdown.style.display==="block"){
+adminDropdown.style.display="none";
+}else{
+filterAdminCollegeList();
+adminDropdown.style.display="block";
 }
-
-if(file.size > 5 * 1024 * 1024){
-alert("Max 5MB");
-return false;
-}
-
-return true;
-}
-
-function setProgress(progressId, fillId, percent){
-document.getElementById(progressId).style.display = "block";
-document.getElementById(fillId).style.width = percent + "%";
-}
-
-async function uploadCollegeImage(file, folderPath, progressId, fillId){
-if(!validateImage(file)) return null;
-
-const storageRef = ref(storage, folderPath);
-const uploadTask = uploadBytesResumable(storageRef, file);
-
-return new Promise((resolve,reject)=>{
-uploadTask.on("state_changed",
-
-(snapshot)=>{
-const percent = Math.round(
-(snapshot.bytesTransferred / snapshot.totalBytes) * 100
-);
-setProgress(progressId, fillId, percent);
-},
-
-(error)=>{
-alert(error.message);
-reject(error);
-},
-
-async ()=>{
-const url = await getDownloadURL(uploadTask.snapshot.ref);
-resolve(url);
-}
-);
-});
-}
-
-
-async function handleFileUpload(inputId, dbField, fileName, progressId, fillId){
-const input = document.getElementById(inputId);
-
-input.addEventListener("change", async function(){
-
-const id = collegeSelect.dataset.selectedId;
-
-if(!id){
-alert("Load college first");
-input.value = "";
-return;
-}
-
-const file = input.files[0];
-if(!file) return;
-
-const snap = await getDoc(doc(db,"colleges",id));
-const data = snap.data();
-
-const url = await uploadCollegeImage(
-file,
-`colleges/${id}/${fileName}`,
-progressId,
-fillId
-);
-
-await setDoc(doc(db,"colleges",id),{
-...data,
-[dbField]:url
-});
-
-currentCollegeData = {
-...data,
-[dbField]:url
 };
 
-renderPreview(currentCollegeData);
+window.filterAdminCollegeList = function(){
+const input=collegeSelect.value.toLowerCase();
 
-input.value = "";
+adminDropdown.innerHTML="";
 
-setTimeout(()=>{
-document.getElementById(progressId).style.display="none";
-document.getElementById(fillId).style.width="0%";
-},1000);
-});
-}
+Object.keys(allColleges).forEach((key)=>{
+const college=allColleges[key];
 
-handleFileUpload("transparentLogoFile","transparentLogo","transparent-logo","transparentProgress","transparentProgressFill");
-handleFileUpload("whiteLogoFile","whiteLogo","white-logo","whiteProgress","whiteProgressFill");
-handleFileUpload("signatureFile","principalSignature","signature","signatureProgress","signatureProgressFill");
-handleFileUpload("watermarkFile","watermark","watermark","watermarkProgress","watermarkProgressFill");
+const match=
+key.toLowerCase().includes(input) ||
+(college.collegeNameEn || "").toLowerCase().includes(input) ||
+(college.collegeNameBn || "").toLowerCase().includes(input);
 
-window.exportBackup = async function(){
-const querySnapshot = await getDocs(collection(db,"colleges"));
+if(match){
+const item=document.createElement("div");
+item.className="college-item";
+item.innerText=college.collegeNameEn || key;
 
-const backup = { colleges:{} };
-
-querySnapshot.forEach((docSnap)=>{
-backup.colleges[docSnap.id] = docSnap.data();
-});
-
-const blob = new Blob([JSON.stringify(backup,null,2)],{type:"application/json"});
-const url = URL.createObjectURL(blob);
-
-const a = document.createElement("a");
-a.href = url;
-a.download = "student-id-backup.json";
-a.click();
-
-URL.revokeObjectURL(url);
+item.onclick=function(){
+collegeSelect.value=college.collegeNameEn || key;
+collegeSelect.dataset.selectedId=key;
+adminDropdown.style.display="none";
 };
 
-document.getElementById("importBackup").addEventListener("change",async function(e){
-const file = e.target.files[0];
-if(!file) return;
-
-const text = await file.text();
-const json = JSON.parse(text);
-
-for(const id in json.colleges){
-await setDoc(doc(db,"colleges",id),json.colleges[id]);
+adminDropdown.appendChild(item);
 }
-
-alert("Imported");
-loadColleges();
 });
+};
