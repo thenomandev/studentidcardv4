@@ -600,7 +600,7 @@ document.querySelectorAll(".college p")[1].innerText="ই-মেইল: "+colleg
 document.querySelector(".footer").innerText="ওয়েবসাইট: "+collegeWebsite;
 
 document.getElementById("qrCode").src=
-"https://api.qrserver.com/v1/create-qr-code/?size=100x100&data="+(qrText || "StudentID");
+"https://api.qrserver.com/v1/create-qr-code/?size=100x100&data="+encodeURIComponent(qrText || "StudentID");
 }
 
 document.getElementById("photoInput").addEventListener("change",function(e){
@@ -947,6 +947,8 @@ updateLogoMode();
 });
 
 </script>
+
+<script src="js/dark-mode-user.js"></script>
 
 </body>
 </html>
