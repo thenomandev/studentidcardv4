@@ -694,6 +694,8 @@ element.style.transform =
 
  window.setTheme = function(theme){
 
+localStorage.setItem("student_id_last_theme", theme);
+
 const frontHeader=document.querySelector(".front-header");
 const topWave=document.querySelector(".top-wave");
 const bottom=document.querySelector(".front-bottom-design");
@@ -940,7 +942,12 @@ document.querySelector(".header-text").style.transform="translate(0px,0px) scale
 
 document.getElementById("logoMode").value="transparent";
 
-setTheme(appData.settings.defaultTheme || "purple");
+const rememberedTheme =
+localStorage.getItem("student_id_last_theme") ||
+appData.settings.defaultTheme ||
+"purple";
+
+setTheme(rememberedTheme);
 
 loadDatabase(appData).then(()=>{
 updateLogoMode();
