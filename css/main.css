@@ -609,3 +609,33 @@ background:#f3e5f5;
 .college-item:last-child{
 border-bottom:none;
 }
+
+/* DARK MODE SAFE SUPPORT */
+
+body.dark-mode .form-box h2,
+body.dark-mode .form-box label,
+body.dark-mode .btn,
+body.dark-mode .reset-btn,
+body.dark-mode .logo-controls button{
+transition:all 0.35s ease !important;
+}
+
+body.dark-mode .social{
+box-shadow:0 8px 20px rgba(0,0,0,0.5) !important;
+}
+
+body.dark-mode .input-box i{
+color:#58a6ff !important;
+}
+
+body.dark-mode .developer-text{
+color:#58a6ff !important;
+}
+
+body.dark-mode #adjustTarget{
+color:#ffffff !important;
+}
+
+body.dark-mode .theme-buttons button{
+opacity:0.95;
+}
