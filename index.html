@@ -218,6 +218,7 @@ Generate Card
 
 <div class="logo transparent" id="logoBox">
 <img id="collegeLogo"
+data-box="https://raw.githubusercontent.com/thenomandev/media/main/Student%20ID%20Card%20WebApps/College%20Logo/Barisal%20college%20New%20Logo/Barishal%20Govt.%20College%20white%20box-Logo.png.png"
 src="https://raw.githubusercontent.com/thenomandev/media/main/Student%20ID%20Card%20WebApps/College%20Logo/Barishal%20Govt.%20College/Barishal%20Govt.%20College%20Transparent%20Logo.png">
 </div>
 
@@ -512,6 +513,7 @@ let logoMode=document.getElementById("logoMode").value;
 let logoBox=document.getElementById("logoBox");
 let inputValue=document.getElementById("collegeSearch").value;
 let preset=null;
+let logo=document.getElementById("collegeLogo");
 
 Object.keys(appData.colleges).forEach((key)=>{
 const college=appData.colleges[key];
@@ -532,14 +534,18 @@ logoBox.classList.add("transparent");
 }
 
 if(preset && appData.colleges[preset]){
-let college = appData.colleges[preset];
+let college=appData.colleges[preset];
 
-document.getElementById("collegeLogo").src =
+logo.src=
 logoMode==="transparent"
 ? college.transparentLogo
 : college.logo;
-}
 
+}else{
+if(logoMode==="box"){
+logo.src=logo.dataset.box;
+}
+}
 }
 
 window.updateCard = function(){
