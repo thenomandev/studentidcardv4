@@ -154,10 +154,6 @@ opacity:0;
 opacity:1;
 }
 
-body.dark-mode{
-color:#ffffff;
-}
-
 body.dark-mode .form-box{
 background:#161b22 !important;
 }
@@ -171,7 +167,7 @@ body.dark-mode .dev-subtitle,
 body.dark-mode .dev-version,
 body.dark-mode .dev-copy,
 body.dark-mode .dev-contact{
-color:#ffffff !important;
+color:#dfe7f2 !important;
 }
 
 body.dark-mode .input-box input,
@@ -238,7 +234,7 @@ const devBox=document.querySelector(".developer-section");
 const heading=document.querySelector(".form-box h2");
 const labels=document.querySelectorAll(".form-box label");
 const icons=document.querySelectorAll(".input-box i");
-const devText=document.querySelector(".developer-text");
+const devTexts=document.querySelectorAll(".developer-text");
 const buttons=document.querySelectorAll(".btn, .logo-controls button, .reset-btn");
 
 if(formBox) formBox.style.boxShadow=`0 4px 18px ${accent}55`;
@@ -258,9 +254,9 @@ icons.forEach(icon=>{
 icon.style.color=accent;
 });
 
-if(devText){
-devText.style.color=accent;
-}
+devTexts.forEach(dev=>{
+dev.style.color=accent;
+});
 
 buttons.forEach(btn=>{
 btn.style.background=accent;
