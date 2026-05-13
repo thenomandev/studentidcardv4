@@ -155,11 +155,11 @@ opacity:1;
 }
 
 body.dark-mode .form-box{
-background:#161b22 !important;
+background:rgba(22,27,34,0.92) !important;
 }
 
 body.dark-mode .developer-section{
-background:rgba(22,27,34,0.95) !important;
+background:rgba(22,27,34,0.92) !important;
 border:1px solid rgba(255,255,255,0.08) !important;
 }
 
@@ -227,7 +227,7 @@ document.head.appendChild(style);
 function applyDarkThemeColors(){
 const accent=getThemeAccent(getCurrentTheme());
 
-document.body.style.background=`linear-gradient(135deg,#0d1117,${accent},#161b22)`;
+document.body.style.background=`linear-gradient(135deg,${accent},${accent}cc,#1c1f2a)`;
 
 const formBox=document.querySelector(".form-box");
 const devBox=document.querySelector(".developer-section");
@@ -237,8 +237,14 @@ const icons=document.querySelectorAll(".input-box i");
 const devTexts=document.querySelectorAll(".developer-text");
 const buttons=document.querySelectorAll(".btn, .logo-controls button, .reset-btn");
 
-if(formBox) formBox.style.boxShadow=`0 4px 18px ${accent}55`;
-if(devBox) devBox.style.boxShadow=`0 4px 18px ${accent}55`;
+if(formBox){
+formBox.style.boxShadow=`0 4px 18px ${accent}55`;
+formBox.style.border=`1px solid ${accent}66`;
+}
+if(devBox){
+devBox.style.boxShadow=`0 4px 18px ${accent}55`;
+devBox.style.border=`1px solid ${accent}66`;
+}
 
 if(heading){
 heading.style.background=`linear-gradient(135deg,${accent},#111)`;
