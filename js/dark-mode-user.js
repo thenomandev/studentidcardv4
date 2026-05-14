@@ -313,7 +313,7 @@ const heading=document.querySelector(".form-box h2");
 const labels=document.querySelectorAll(".form-box label");
 const icons=document.querySelectorAll(".input-box i, .developer-text");
 const buttons=document.querySelectorAll(".btn, .logo-controls button, .reset-btn");
-const devText=document.querySelector(".developer-text");
+const devTexts=document.querySelectorAll(".developer-text");
 
 if(formBox){
 formBox.style.boxShadow=`0 8px 28px ${accent}55`;
@@ -343,9 +343,9 @@ buttons.forEach(btn=>{
 btn.style.background=accent;
 });
 
-if(devText){
-devText.style.color=accent;
-}
+devTexts.forEach(text=>{
+text.style.setProperty("color", accent, "important");
+});
 }
 
 function clearDarkMode(){
