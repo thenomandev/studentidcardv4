@@ -1,11 +1,14 @@
 (function(){
 
-const STORAGE_KEY = "student_id_dark_mode";
+const MODE_KEY="admin_dark_mode_pref";
+const SYSTEM="system";
+const ON="on";
+const OFF="off";
 
 function injectStyles(){
-const style = document.createElement("style");
+const style=document.createElement("style");
 
-style.innerHTML = `
+style.innerHTML=`
 body,
 .container,
 input,
@@ -13,59 +16,115 @@ textarea,
 select,
 button,
 .college-dropdown,
-.college-item{
+.college-item,
+#adminThemeModeLauncher,
+#adminThemeModePopup,
+.adminThemeModeOption{
 transition:all 0.35s ease;
 }
 
-#adminDarkToggle{
+#adminThemeModeLauncher{
 position:fixed;
 top:14px;
 right:14px;
 z-index:999999;
-background:rgba(255,255,255,0.95);
-backdrop-filter:blur(14px);
-padding:10px 14px;
+width:56px;
+height:56px;
 border-radius:18px;
-box-shadow:0 8px 24px rgba(0,0,0,0.18);
-cursor:pointer;
-user-select:none;
-}
-
-#adminDarkInner{
 display:flex;
 align-items:center;
-gap:10px;
+justify-content:center;
+font-size:24px;
+cursor:pointer;
+background:rgba(255,255,255,0.95);
+backdrop-filter:blur(14px);
+box-shadow:0 8px 24px rgba(0,0,0,0.18);
 }
 
-#adminDarkIcon{
-font-size:20px;
+#adminThemeModeOverlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.45);
+z-index:999998;
+display:none;
 }
 
-#adminDarkText{
-font-size:14px;
-font-weight:700;
-color:#111;
-white-space:nowrap;
-}
-
-#adminDarkSwitch{
-width:46px;
-height:24px;
-background:#d0d7de;
-border-radius:999px;
-position:relative;
-}
-
-#adminDarkKnob{
-width:20px;
-height:20px;
+#adminThemeModePopup{
+position:fixed;
+left:50%;
+top:50%;
+transform:translate(-50%,-50%);
+width:320px;
+max-width:90vw;
 background:white;
-border-radius:50%;
-position:absolute;
-top:2px;
-left:2px;
-box-shadow:0 2px 8px rgba(0,0,0,0.2);
-transition:all 0.35s ease;
+border-radius:22px;
+padding:18px;
+z-index:999999;
+box-shadow:0 20px 50px rgba(0,0,0,0.25);
+display:none;
+}
+
+#adminThemeModeTitle{
+font-size:20px;
+font-weight:800;
+margin-bottom:16px;
+text-align:center;
+color:#111111;
+}
+
+.adminThemeModeOption{
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:14px 16px;
+border-radius:16px;
+cursor:pointer;
+margin-bottom:10px;
+border:1px solid #e5e5e5;
+background:white;
+}
+
+.adminThemeModeOption:last-child{
+margin-bottom:0;
+}
+
+.adminThemeModeLeft{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.adminThemeModeIcon{
+font-size:22px;
+}
+
+.adminThemeModeText{
+display:flex;
+flex-direction:column;
+}
+
+.adminThemeModeMain{
+font-size:15px;
+font-weight:700;
+color:#111111;
+}
+
+.adminThemeModeSub{
+font-size:12px;
+opacity:0.7;
+margin-top:2px;
+color:#111111;
+}
+
+.adminThemeModeCheck{
+font-size:18px;
+font-weight:900;
+opacity:0;
+color:#111111;
+}
+
+.adminThemeModeOption.active .adminThemeModeCheck{
+opacity:1;
 }
 
 body.dark-mode{
@@ -79,7 +138,10 @@ box-shadow:0 10px 30px rgba(0,0,0,0.6) !important;
 }
 
 body.dark-mode h1,
-body.dark-mode h3{
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode label{
 color:#ffffff !important;
 }
 
@@ -110,32 +172,37 @@ body.dark-mode .college-item:hover{
 background:#21262d !important;
 }
 
-body.dark-mode #adminDarkToggle{
-background:rgba(22,27,34,0.95);
+body.dark-mode #adminThemeModeLauncher{
+background:rgba(18,22,28,0.95);
 border:1px solid rgba(255,255,255,0.08);
 }
 
-body.dark-mode #adminDarkText{
+body.dark-mode #adminThemeModePopup{
+background:#161b22;
 color:#ffffff;
 }
 
-body.dark-mode #adminDarkSwitch{
-background:#238636;
+body.dark-mode #adminThemeModeTitle{
+color:#ffffff;
 }
 
-body.dark-mode #adminDarkKnob{
-left:24px;
+body.dark-mode .adminThemeModeOption{
+background:#0d1117;
+border:1px solid rgba(255,255,255,0.08);
+}
+
+body.dark-mode .adminThemeModeMain,
+body.dark-mode .adminThemeModeSub,
+body.dark-mode .adminThemeModeCheck{
+color:#ffffff;
 }
 
 @media(max-width:480px){
-#adminDarkToggle{
+#adminThemeModeLauncher{
 top:10px;
 right:10px;
-padding:9px 12px;
-}
-
-#adminDarkText{
-font-size:13px;
+width:52px;
+height:52px;
 }
 }
 `;
@@ -143,76 +210,162 @@ font-size:13px;
 document.head.appendChild(style);
 }
 
-function createToggle(){
-const toggle=document.createElement("div");
-toggle.id="adminDarkToggle";
+function systemDark(){
+return window.matchMedia("(prefers-color-scheme: dark)").matches;
+}
 
-toggle.innerHTML=`
-<div id="adminDarkInner">
-<span id="adminDarkIcon">🌙</span>
-<span id="adminDarkText">Dark Mode</span>
-<div id="adminDarkSwitch">
-<div id="adminDarkKnob"></div>
+function getMode(){
+return localStorage.getItem(MODE_KEY) || SYSTEM;
+}
+
+function clearDarkMode(){
+document.body.classList.remove("dark-mode");
+}
+
+function enableDarkMode(){
+document.body.classList.add("dark-mode");
+}
+
+function applyMode(){
+const mode=getMode();
+
+if(mode===ON){
+enableDarkMode();
+return;
+}
+
+if(mode===OFF){
+clearDarkMode();
+return;
+}
+
+if(systemDark()){
+enableDarkMode();
+}else{
+clearDarkMode();
+}
+}
+
+function setMode(mode){
+localStorage.setItem(MODE_KEY,mode);
+applyMode();
+updateSelection();
+closePopup();
+}
+
+function updateSelection(){
+document.querySelectorAll(".adminThemeModeOption").forEach(el=>{
+el.classList.remove("active");
+});
+
+const mode=getMode();
+const target=document.querySelector(`[data-mode="${mode}"]`);
+
+if(target){
+target.classList.add("active");
+}
+
+const launcher=document.getElementById("adminThemeModeLauncher");
+
+if(!launcher) return;
+
+if(mode===ON){
+launcher.innerHTML="🌙";
+}else if(mode===OFF){
+launcher.innerHTML="☀️";
+}else{
+launcher.innerHTML="🌓";
+}
+}
+
+function createUI(){
+const launcher=document.createElement("div");
+launcher.id="adminThemeModeLauncher";
+launcher.innerHTML="🌓";
+
+const overlay=document.createElement("div");
+overlay.id="adminThemeModeOverlay";
+
+const popup=document.createElement("div");
+popup.id="adminThemeModePopup";
+
+popup.innerHTML=`
+<div id="adminThemeModeTitle">Dark Mode</div>
+
+<div class="adminThemeModeOption" data-mode="off">
+<div class="adminThemeModeLeft">
+<div class="adminThemeModeIcon">☀️</div>
+<div class="adminThemeModeText">
+<div class="adminThemeModeMain">Off</div>
+<div class="adminThemeModeSub">Always light mode</div>
 </div>
+</div>
+<div class="adminThemeModeCheck">✓</div>
+</div>
+
+<div class="adminThemeModeOption" data-mode="on">
+<div class="adminThemeModeLeft">
+<div class="adminThemeModeIcon">🌙</div>
+<div class="adminThemeModeText">
+<div class="adminThemeModeMain">On</div>
+<div class="adminThemeModeSub">Always dark mode</div>
+</div>
+</div>
+<div class="adminThemeModeCheck">✓</div>
+</div>
+
+<div class="adminThemeModeOption" data-mode="system">
+<div class="adminThemeModeLeft">
+<div class="adminThemeModeIcon">🌓</div>
+<div class="adminThemeModeText">
+<div class="adminThemeModeMain">System</div>
+<div class="adminThemeModeSub">Follow device appearance</div>
+</div>
+</div>
+<div class="adminThemeModeCheck">✓</div>
 </div>
 `;
 
-document.body.appendChild(toggle);
+document.body.appendChild(overlay);
+document.body.appendChild(popup);
+document.body.appendChild(launcher);
 
-toggle.addEventListener("click",function(){
-const isDark=document.body.classList.contains("dark-mode");
-setDarkMode(!isDark);
+launcher.addEventListener("click",openPopup);
+overlay.addEventListener("click",closePopup);
+
+document.querySelectorAll(".adminThemeModeOption").forEach(option=>{
+option.addEventListener("click",function(){
+setMode(this.dataset.mode);
+});
 });
 }
 
-function updateUI(isDark){
-const icon=document.getElementById("adminDarkIcon");
-const text=document.getElementById("adminDarkText");
-
-if(!icon || !text) return;
-
-if(isDark){
-icon.textContent="☀️";
-text.textContent="Light Mode";
-}else{
-icon.textContent="🌙";
-text.textContent="Dark Mode";
-}
+function openPopup(){
+document.getElementById("adminThemeModeOverlay").style.display="block";
+document.getElementById("adminThemeModePopup").style.display="block";
 }
 
-function setDarkMode(enable){
-if(enable){
-document.body.classList.add("dark-mode");
-localStorage.setItem(STORAGE_KEY,"dark");
-updateUI(true);
-}else{
-document.body.classList.remove("dark-mode");
-localStorage.setItem(STORAGE_KEY,"light");
-updateUI(false);
-}
+function closePopup(){
+document.getElementById("adminThemeModeOverlay").style.display="none";
+document.getElementById("adminThemeModePopup").style.display="none";
 }
 
-function initMode(){
-const saved=localStorage.getItem(STORAGE_KEY);
+function watchSystemTheme(){
+const media=window.matchMedia("(prefers-color-scheme: dark)");
 
-if(saved==="dark"){
-setDarkMode(true);
-return;
+media.addEventListener("change",function(){
+if(getMode()===SYSTEM){
+applyMode();
 }
-
-if(saved==="light"){
-setDarkMode(false);
-return;
-}
-
-const prefersDark=window.matchMedia("(prefers-color-scheme: dark)").matches;
-setDarkMode(prefersDark);
+});
 }
 
 document.addEventListener("DOMContentLoaded",function(){
 injectStyles();
-createToggle();
-initMode();
+createUI();
+applyMode();
+updateSelection();
+watchSystemTheme();
 });
 
 })();
