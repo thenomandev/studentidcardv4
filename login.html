@@ -3,56 +3,181 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Login</title>
+<title>ID Card Generator Admin Login</title>
 
 <style>
-body{
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+*{
 margin:0;
-font-family:Arial,sans-serif;
-background:linear-gradient(135deg,#6a11cb,#2575fc);
-height:100vh;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+transition:all .35s ease;
+}
+
+body{
+min-height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
+padding:20px;
+background:
+radial-gradient(circle at top left,rgba(124,58,237,0.08),transparent 30%),
+radial-gradient(circle at bottom right,rgba(37,99,235,0.08),transparent 30%),
+#f5f7fb;
 }
 
 .box{
-background:white;
-padding:30px;
-border-radius:20px;
-width:90%;
-max-width:400px;
-box-shadow:0 10px 30px rgba(0,0,0,0.2);
+width:100%;
+max-width:430px;
+padding:38px 28px;
+border-radius:30px;
+background:rgba(255,255,255,0.96);
+backdrop-filter:blur(20px);
+box-shadow:
+0 25px 80px rgba(0,0,0,0.12),
+0 0 0 1px rgba(255,255,255,0.7);
+}
+
+.brand{
+text-align:center;
+margin-bottom:14px;
+}
+
+.brand-logo{
+width:82px;
+height:82px;
+margin:0 auto 10px;
+border-radius:22px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:42px;
+background:linear-gradient(135deg,#7c3aed,#2563eb);
+box-shadow:0 14px 30px rgba(106,17,203,0.25);
+}
+
+.brand-title{
+font-size:28px;
+font-weight:800;
+letter-spacing:1.2px;
+background:linear-gradient(135deg,#7c3aed,#2563eb);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
+
+.brand-subtitle{
+font-size:14px;
+color:#64748b;
+margin-top:2px;
+font-weight:600;
 }
 
 h2{
 text-align:center;
-margin-bottom:20px;
+font-size:30px;
+font-weight:900;
+margin:0 0 12px;
+letter-spacing:0.2px;
+color:#111827;
+text-shadow:
+0 1px 0 rgba(255,255,255,0.95),
+0 6px 14px rgba(37,99,235,0.10);
 }
 
 input{
 width:100%;
-padding:14px;
-margin:10px 0;
-border:1px solid #ccc;
-border-radius:10px;
+padding:18px;
+margin:12px 0;
+border:1.5px solid #dbe2ea;
+border-radius:16px;
 font-size:16px;
-box-sizing:border-box;
+background:#f8fafc;
+outline:none;
+}
+
+input:focus{
+border-color:#7c3aed;
+background:white;
+box-shadow:0 0 0 4px rgba(124,58,237,0.12);
 }
 
 button{
 width:100%;
-padding:14px;
+padding:18px;
+margin-top:12px;
 border:none;
-background:#6a11cb;
-color:white;
-font-size:16px;
-border-radius:10px;
+border-radius:18px;
+font-size:20px;
+font-weight:700;
 cursor:pointer;
+color:white;
+background:linear-gradient(135deg,#7c3aed,#2563eb);
+box-shadow:0 15px 30px rgba(106,17,203,0.25);
 }
 
 button:hover{
-background:#5210a5;
+transform:translateY(-2px);
+}
+
+/* AUTO DARK MODE */
+body.dark-mode{
+background:#0d1117;
+}
+
+body.dark-mode .box{
+background:rgba(22,27,34,0.96);
+box-shadow:
+0 25px 80px rgba(0,0,0,0.55),
+0 0 0 1px rgba(255,255,255,0.05);
+}
+
+body.dark-mode .brand-subtitle{
+color:#9aa4b2;
+}
+
+body.dark-mode h2{
+color:#ffffff;
+text-shadow:
+0 1px 0 rgba(255,255,255,0.06),
+0 8px 20px rgba(37,99,235,0.18);
+}
+
+body.dark-mode input{
+background:#0d1117;
+color:#ffffff;
+border:1.5px solid #30363d;
+}
+
+body.dark-mode input::placeholder{
+color:#8b949e;
+}
+
+body.dark-mode input:focus{
+border-color:#7c3aed;
+background:#111827;
+box-shadow:0 0 0 4px rgba(124,58,237,0.18);
+}
+
+body.dark-mode button{
+background:linear-gradient(135deg,#7c3aed,#2563eb);
+box-shadow:0 15px 30px rgba(37,99,235,0.25);
+}
+
+@media(max-width:480px){
+.box{
+padding:30px 22px;
+border-radius:24px;
+}
+
+.brand-title{
+font-size:24px;
+}
+
+h2{
+font-size:30px;
+}
 }
 </style>
 </head>
@@ -60,10 +185,19 @@ background:#5210a5;
 <body>
 
 <div class="box">
+
+<div class="brand">
+<div class="brand-logo">🪪</div>
+<div class="brand-title">ID CARD GENERATOR</div>
+<div class="brand-subtitle">Admin Control Panel</div>
+</div>
+
 <h2>Admin Login</h2>
+
 <input type="email" id="email" placeholder="Admin Email">
 <input type="password" id="password" placeholder="Password">
 <button onclick="login()">Login</button>
+
 </div>
 
 <script type="module">
@@ -83,7 +217,23 @@ alert(err.message);
 }
 </script>
 
-<script src="dark-mode-login.js"></script>
+<script>
+(function(){
+const media=window.matchMedia("(prefers-color-scheme: dark)");
+
+function applyMode(e){
+if(e.matches){
+document.body.classList.add("dark-mode");
+}else{
+document.body.classList.remove("dark-mode");
+}
+}
+
+applyMode(media);
+
+media.addEventListener("change",applyMode);
+})();
+</script>
 
 </body>
 </html>
