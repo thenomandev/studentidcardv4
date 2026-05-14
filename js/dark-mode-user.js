@@ -196,30 +196,6 @@ body.dark-mode{
 color:#ffffff;
 }
 
-body.dark-mode .id-card,
-body.dark-mode .info-row,
-body.dark-mode .back-row,
-body.dark-mode .college,
-body.dark-mode .footer,
-body.dark-mode .notice,
-body.dark-mode .student-name{
-opacity:1 !important;
-filter:none !important;
-visibility:visible !important;
-}
-
-body.dark-mode .student-name,
-body.dark-mode .info-row,
-body.dark-mode .info-row div,
-body.dark-mode .back-row,
-body.dark-mode .back-row div,
-body.dark-mode .notice p,
-body.dark-mode .college h2,
-body.dark-mode .college p,
-body.dark-mode .signature p{
-color:#111111 !important;
-}
-
 body.dark-mode .form-box{
 background:rgba(18,22,28,0.92) !important;
 backdrop-filter:blur(14px);
@@ -311,7 +287,7 @@ const formBox=document.querySelector(".form-box");
 const devBox=document.querySelector(".developer-section");
 const heading=document.querySelector(".form-box h2");
 const labels=document.querySelectorAll(".form-box label");
-const icons=document.querySelectorAll(".input-box i, .developer-text");
+const icons=document.querySelectorAll(".input-box i");
 const buttons=document.querySelectorAll(".btn, .logo-controls button, .reset-btn");
 const devText=document.querySelector(".developer-text");
 
